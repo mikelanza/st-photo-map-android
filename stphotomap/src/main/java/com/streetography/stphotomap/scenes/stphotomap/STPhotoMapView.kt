@@ -33,7 +33,7 @@ public class STPhotoMapView @JvmOverloads constructor(
     init {
         this.setup()
 
-        inflate(context, R.layout.st_photo_map_view,  this)
+        inflate(context, R.layout.st_photo_map_view, this)
 
         this.findViews(context)
         this.setupViews()
