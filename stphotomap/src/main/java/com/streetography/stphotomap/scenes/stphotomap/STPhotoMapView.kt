@@ -4,7 +4,7 @@ import android.content.Context
 import android.support.v4.app.FragmentActivity
 import android.util.AttributeSet
 import android.util.Log
-import android.view.View
+import android.widget.RelativeLayout
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -23,7 +23,7 @@ interface STPhotoMapDisplayLogic {
 }
 
 public class STPhotoMapView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): View(context, attrs, defStyleAttr),
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr),
     STPhotoMapDisplayLogic, OnMapReadyCallback {
     var interactor: STPhotoMapBusinessLogic? = null
 
@@ -33,7 +33,7 @@ public class STPhotoMapView @JvmOverloads constructor(
     init {
         this.setup()
 
-        inflate(context, R.layout.st_photo_map_view, null)
+        inflate(context, R.layout.st_photo_map_view,  this)
 
         this.findViews(context)
         this.setupViews()
