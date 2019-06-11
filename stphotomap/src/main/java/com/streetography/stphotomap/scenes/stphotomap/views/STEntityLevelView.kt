@@ -9,23 +9,12 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.streetography.stphotomap.R
 
-class STEntityLevelView : RelativeLayout {
+class STEntityLevelView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr) {
     private var containerLayout: LinearLayout? = null
     private var titleTextView: TextView? = null
 
-    constructor(context: Context) : super(context) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init()
-    }
-
-    private fun init() {
+    init {
         inflateSubviews()
         findSubviews()
         setupSubviews()
