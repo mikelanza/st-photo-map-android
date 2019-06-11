@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/st-photo-map-android.iml" filepath="$PROJECT_DIR$/st-photo-map-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/stphotomap/stphotomap.iml" filepath="$PROJECT_DIR$/stphotomap/stphotomap.iml" />
+    </modules>
+  </component>
+</project>
