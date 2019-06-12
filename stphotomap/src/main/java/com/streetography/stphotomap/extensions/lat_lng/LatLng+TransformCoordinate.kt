@@ -1,4 +1,4 @@
-package com.streetography.stphotomap.extensions.LatLng
+package com.streetography.stphotomap.extensions.lat_lng
 
 import com.google.android.gms.maps.model.LatLng
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
