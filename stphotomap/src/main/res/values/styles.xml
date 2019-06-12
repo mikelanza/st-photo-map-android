@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="STEntityLevelView">
+        <item name="showDuration">1500</item>
+        <item name="fadeDuration">200</item>
+    </style>
+
+    <style name="STEntityLevelViewContainerLayout">
+        <item name="android:background">#F241ABFF</item>
+    </style>
+
+    <style name="STEntityLevelViewTitleTextView">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <declare-styleable name="STEntityLevelView">
+        <attr name="showDuration"/>
+        <attr name="fadeDuration"/>
+    </declare-styleable>
+</resources>
