@@ -1,7 +1,8 @@
 package com.streetography.stphotomap.scenes.stphotomap.views
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
@@ -9,15 +10,28 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.streetography.stphotomap.R
 
-class STEntityLevelView @JvmOverloads constructor(
+public class STEntityLevelView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr) {
     private var containerLayout: LinearLayout? = null
     private var titleTextView: TextView? = null
 
+    public fun setImage(resourceId: Int) {
+        val drawable = ContextCompat.getDrawable(this.context, resourceId)
+        this.titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
+    }
+
+    public fun setTitle(title: String?) {
+        this.titleTextView?.text = title
+    }
+
+    public fun show() {
+        fadeIn()
+        postDelayed({ fadeOut() }, showDuration)
+    }
+
     init {
         inflateSubviews()
         findSubviews()
-        setupSubviews()
     }
 
     private fun inflateSubviews() {
@@ -29,41 +43,31 @@ class STEntityLevelView @JvmOverloads constructor(
         this.titleTextView = findViewById(R.id.titleTextView)
     }
 
-    private fun setupSubviews() {
-        setupContainerLayout()
-        setupTitleTextView()
-    }
-
-    private fun setupContainerLayout() {
-        this.containerLayout?.setBackgroundColor(Color.WHITE) // TODO - Add color from styles!
-    }
-
-    private fun setupTitleTextView() {
-        this.titleTextView?.setTextColor(Color.WHITE) // TODO - Add color and text size from styles!
-    }
-
-    fun setTitle(title: String) {
-        this.titleTextView?.text = title
-    }
-
-    fun show() {
-        fadeIn()
-        postDelayed({ fadeOut() }, SHOW_DURATION)
-    }
-
     private fun fadeIn() {
         this.alpha = 0f
         this.visibility = View.VISIBLE
-        animate().setDuration(FADE_DURATION).alpha(1f)
+        animate().setDuration(fadeDuration).alpha(1f)
     }
 
     private fun fadeOut() {
-        animate().setDuration(FADE_DURATION).alpha(0f)
-        postDelayed({ this.visibility = View.GONE }, FADE_DURATION)
+        animate().setDuration(fadeDuration).alpha(0f)
+        postDelayed({ this.visibility = View.GONE }, fadeDuration)
     }
 
-    companion object {
-        private val FADE_DURATION: Long = 300
-        private val SHOW_DURATION: Long = 2000 // TODO - Add duration from styles!
-    }
+    private val showDuration: Long
+        get() {
+            val attributes = this.context.obtainStyledAttributes(R.style.STEntityLevelView, R.styleable.STEntityLevelView)
+            val duration = attributes.getFloat(0, 0F)
+            attributes.recycle()
+            return duration.toLong()
+        }
+
+    private val fadeDuration: Long
+        @SuppressLint("ResourceType")
+        get() {
+            val attributes = this.context.obtainStyledAttributes(R.style.STEntityLevelView, R.styleable.STEntityLevelView)
+            val duration = attributes.getFloat(1, 0F)
+            attributes.recycle()
+            return duration.toLong()
+        }
 }
