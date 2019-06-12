@@ -3,9 +3,8 @@ package com.streetography.stphotomap.extensions.GoogleMap
 import com.google.android.gms.maps.GoogleMap
 import com.streetography.stphotomap.extensions.LatLng.transformCoordinate
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
-import java.util.*
 
-fun GoogleMap.visibleTile(): ArrayList<TileCoordinate> {
+fun GoogleMap.visibleTiles(): ArrayList<TileCoordinate> {
     val zoom = Math.round(this.getCameraPosition().zoom)
 
     val northWestTileCoordinate = this.getProjection().getVisibleRegion().farLeft.transformCoordinate(zoom)

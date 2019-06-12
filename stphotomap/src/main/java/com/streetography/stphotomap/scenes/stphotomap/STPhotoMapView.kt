@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.android.gms.maps.model.TileProvider
 import com.google.android.gms.maps.model.UrlTileProvider
 import com.streetography.stphotomap.R
+import com.streetography.stphotomap.extensions.GoogleMap.visibleTiles
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import java.lang.ref.WeakReference
@@ -24,7 +25,7 @@ interface STPhotoMapDisplayLogic {
 
 public class STPhotoMapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr),
-    STPhotoMapDisplayLogic, OnMapReadyCallback {
+    STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener {
     var interactor: STPhotoMapBusinessLogic? = null
 
     var mapView: GoogleMap? = null
@@ -66,6 +67,17 @@ public class STPhotoMapView @JvmOverloads constructor(
     override fun onMapReady(googleMap: GoogleMap) {
         this.mapView = googleMap
         this.mapView?.addTileOverlay(getTileOverlayOptions())
+    }
+
+    override fun onCameraIdle() {
+        this.shouldUpdateVisibleTiles()
+    }
+
+    private fun shouldUpdateVisibleTiles() {
+        this.mapView?.let { googleMap ->
+            val request = STPhotoMapModels.VisibleTiles.Request(googleMap.visibleTiles())
+            this.interactor?.shouldUpdateVisibleTiles(request)
+        }
     }
     //endregion
 

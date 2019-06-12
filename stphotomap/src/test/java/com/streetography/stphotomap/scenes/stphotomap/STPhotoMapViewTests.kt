@@ -3,6 +3,7 @@ package com.streetography.stphotomap.scenes.stphotomap
 import android.content.Context
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapBusinessLogicSpy
 import junit.framework.TestCase
+import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -35,5 +36,11 @@ class STPhotoMapViewTests: TestCase() {
     @Test
     fun test() {
         assertTrue(true)
+    }
+
+    @Test
+    fun testShouldUpdateVisibleTilesWhenCameraIdle() {
+        this.sut?.onCameraIdle()
+        Assert.assertTrue(this.interactorSpy.shouldUpdateVisibleTilesCalled)
     }
 }

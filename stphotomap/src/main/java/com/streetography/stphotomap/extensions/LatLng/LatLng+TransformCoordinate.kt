@@ -12,5 +12,6 @@ fun LatLng.transformCoordinate(zoom: Int): TileCoordinate {
             zoom.toDouble()
         )
     ).toInt()
+
     return TileCoordinate(zoom, tileX, tileY)
 }
