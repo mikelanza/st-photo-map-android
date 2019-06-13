@@ -26,7 +26,14 @@ class STPhotoMapPresenterTests: TestCase() {
     }
 
     @Test
-    fun test() {
-        assertTrue(true)
+    fun testPresentLoadingState() {
+        this.sut.presentLoadingState()
+        assertTrue(this.displayerSpy.displayLoadingStateCalled)
+    }
+
+    @Test
+    fun testPresentNotLoadingState() {
+        this.sut.presentNotLoadingState()
+        assertTrue(this.displayerSpy.displayNotLoadingStateCalled)
     }
 }

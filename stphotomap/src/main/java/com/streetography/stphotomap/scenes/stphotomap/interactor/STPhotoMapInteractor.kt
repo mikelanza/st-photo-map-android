@@ -13,7 +13,7 @@ interface STPhotoMapBusinessLogic {
     fun shouldDetermineEntityLevel()
 }
 
-class STPhotoMapInteractor: STPhotoMapBusinessLogic,
+class STPhotoMapInteractor() : STPhotoMapBusinessLogic,
     STPhotoMapWorkerDelegate {
     var worker: STPhotoMapWorker?
     var presenter: STPhotoMapPresentationLogic? = null
@@ -21,10 +21,9 @@ class STPhotoMapInteractor: STPhotoMapBusinessLogic,
     var visibleTiles: ArrayList<TileCoordinate>
     var entityLevelHandler: STPhotoMapEntityLevelHandler
 
-    constructor() {
+    init {
         this.worker = STPhotoMapWorker(this)
-
-        this.visibleTiles = ArrayList<TileCoordinate>()
+        this.visibleTiles = ArrayList()
         this.entityLevelHandler = STPhotoMapEntityLevelHandler()
     }
 
