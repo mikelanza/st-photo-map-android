@@ -10,8 +10,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.android.gms.maps.model.TileProvider
 import com.google.android.gms.maps.model.UrlTileProvider
-import com.streetography.stphotomap.extensions.GoogleMap.visibleTiles
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.streetography.stphotomap.R
+import com.streetography.stphotomap.extensions.google_map.visibleTiles
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import java.lang.ref.WeakReference
@@ -60,6 +62,8 @@ public open class STPhotoMapView @JvmOverloads constructor(
     override fun onMapReady(googleMap: GoogleMap) {
         this.mapView = googleMap
         this.mapView?.addTileOverlay(getTileOverlayOptions())
+
+        this.setupGoogleMapStyle()
     }
 
     override fun onCameraIdle() {
@@ -73,6 +77,13 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.interactor?.shouldUpdateVisibleTiles(STPhotoMapModels.VisibleTiles.Request(visibleTiles))
     }
     //endregion
+
+    //region Google map style
+    private fun setupGoogleMapStyle() {
+        this.mapView?.mapType = GoogleMap.MAP_TYPE_NONE
+        this.mapView?.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, R.raw.google_map_style))
+    }
+    //end
 
     //region Tile overlay & provider
     private fun getTileOverlayOptions(): TileOverlayOptions {

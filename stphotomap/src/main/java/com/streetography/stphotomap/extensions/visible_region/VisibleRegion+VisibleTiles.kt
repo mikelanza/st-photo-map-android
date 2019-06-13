@@ -1,14 +1,13 @@
-package com.streetography.stphotomap.extensions.GoogleMap
+package com.streetography.stphotomap.extensions.visible_region
 
-import com.google.android.gms.maps.GoogleMap
-import com.streetography.stphotomap.extensions.LatLng.transformCoordinate
+import com.google.android.gms.maps.model.VisibleRegion
+import com.streetography.stphotomap.extensions.lat_lng.transformCoordinate
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 
-fun GoogleMap.visibleTiles(): ArrayList<TileCoordinate> {
-    val zoom = Math.round(this.getCameraPosition().zoom)
+fun VisibleRegion.visibleTiles(zoom: Int): ArrayList<TileCoordinate> {
 
-    val northWestTileCoordinate = this.getProjection().getVisibleRegion().farLeft.transformCoordinate(zoom)
-    val southEastTileCoordinate = this.getProjection().getVisibleRegion().nearRight.transformCoordinate(zoom)
+    val northWestTileCoordinate = this.farLeft.transformCoordinate(zoom)
+    val southEastTileCoordinate = this.nearRight.transformCoordinate(zoom)
 
     val xMax = northWestTileCoordinate.maxX(southEastTileCoordinate)
     val xMin = northWestTileCoordinate.minX(southEastTileCoordinate)
@@ -23,6 +22,5 @@ fun GoogleMap.visibleTiles(): ArrayList<TileCoordinate> {
             visibleTiles.add(TileCoordinate(zoom, x, y))
         }
     }
-
     return visibleTiles
 }
