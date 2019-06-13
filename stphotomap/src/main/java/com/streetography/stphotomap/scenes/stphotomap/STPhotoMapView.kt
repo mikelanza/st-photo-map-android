@@ -7,13 +7,13 @@ import android.widget.RelativeLayout
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.android.gms.maps.model.TileProvider
 import com.google.android.gms.maps.model.UrlTileProvider
-import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
-import com.google.android.gms.maps.model.MapStyleOptions
 import com.streetography.stphotomap.R
 import com.streetography.stphotomap.extensions.google_map.visibleTiles
+import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import java.lang.ref.WeakReference
@@ -95,7 +95,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
             override fun getTileUrl(x: Int, y: Int, zoom: Int): URL {
                 val s = String.format(
                     Locale.getDefault(),
-                    "https://tilesdev.streetography.com/tile/%d/%d/%d.jpeg",
+                    "https://tilesdev.streetography.com/tile/%d/%d/%d.jpeg?basemap=yes",
                     zoom, x, y
                 )
 
