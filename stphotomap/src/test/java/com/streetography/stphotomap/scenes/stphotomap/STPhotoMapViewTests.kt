@@ -37,4 +37,12 @@ class STPhotoMapViewTests: TestCase() {
         this.sut.onCameraIdle()
         assertTrue("The interactor should update visible tiles when camera is on idle.", this.interactorSpy.shouldUpdateVisibleTilesCalled)
     }
+
+    @Test
+    fun testShouldDetermineEntityLevelWhenCameraIdle() {
+        this.sut.onCameraIdle()
+
+        assertTrue("The interactor should determine entity level when camera is on idle.", this.interactorSpy.shouldDetermineEntityLevelCalled)
+    }
+
 }

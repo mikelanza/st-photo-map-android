@@ -78,6 +78,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     override fun onCameraIdle() {
         this.shouldUpdateVisibleTiles()
+        this.shouldDetermineEntityLevel()
     }
     //endregion
 
@@ -85,6 +86,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
     private fun shouldUpdateVisibleTiles() {
         val visibleTiles: ArrayList<TileCoordinate> = this.mapView?.visibleTiles() ?: ArrayList()
         this.interactor?.shouldUpdateVisibleTiles(STPhotoMapModels.VisibleTiles.Request(visibleTiles))
+    }
+
+    private fun shouldDetermineEntityLevel() {
+        this.interactor?.shouldDetermineEntityLevel()
     }
     //endregion
 
