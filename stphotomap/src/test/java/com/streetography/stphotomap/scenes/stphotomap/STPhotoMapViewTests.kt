@@ -1,5 +1,6 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
+import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapBusinessLogicSpy
 import junit.framework.TestCase
@@ -41,8 +42,32 @@ class STPhotoMapViewTests: TestCase() {
     @Test
     fun testShouldDetermineEntityLevelWhenCameraIdle() {
         this.sut.onCameraIdle()
-
         assertTrue("The interactor should determine entity level when camera is on idle.", this.interactorSpy.shouldDetermineEntityLevelCalled)
     }
 
+    @Test
+    fun testDisplayLoadingState() {
+        this.sut.progressBar?.visibility = View.GONE
+        this.sut.progressBar?.progress = 0
+
+        this.sut.displayLoadingState()
+
+        this.sut.post {
+            assertEquals(View.VISIBLE, this.sut.progressBar?.visibility)
+            assertEquals(100, this.sut.progressBar?.progress)
+        }
+    }
+
+    @Test
+    fun testDisplayNotLoadingState() {
+        this.sut.progressBar?.visibility = View.VISIBLE
+        this.sut.progressBar?.progress = 100
+
+        this.sut.displayNotLoadingState()
+
+        this.sut.post {
+            assertEquals(View.GONE, this.sut.progressBar?.visibility)
+            assertEquals(0, this.sut.progressBar?.progress)
+        }
+    }
 }
