@@ -8,6 +8,7 @@ import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapModels
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapPresentationLogic
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapWorker
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapWorkerDelegate
+import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
 import com.streetography.stphotomap.scenes.stphotomap.cache.STPhotoMapGeojsonCache
 import com.streetography.stphotomap.scenes.stphotomap.cache.STPhotoMapGeojsonCacheHandler
 import com.streetography.stphotomap.scenes.stphotomap.entity_level.STPhotoMapEntityLevelHandler
@@ -55,9 +56,8 @@ class STPhotoMapInteractor(): STPhotoMapBusinessLogic,
 
     internal fun getVisibleCachedTiles(): ArrayList<STPhotoMapGeojsonCache.Tile> {
         val cachedVisileTiles = this.visibleTiles.map { tile ->
-            // TODO: Build url from tile
-            val keyUrl = ""
-            this.cacheHandler.cache.getTile(keyUrl)
+            val uri = STPhotoMapUriBuilder().geojsonTileUri(tile)
+            this.cacheHandler.cache.getTile(uri.first)
         }
         return ArrayList(cachedVisileTiles)
     }

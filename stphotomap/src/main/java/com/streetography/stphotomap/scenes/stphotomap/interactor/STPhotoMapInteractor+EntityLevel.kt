@@ -4,6 +4,7 @@ import com.streetography.stphotomap.extensions.geojson_object.entityLevel
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
+import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
 import com.streetography.stphotomap.scenes.stphotomap.cache.STPhotoMapGeojsonCache
 
 fun STPhotoMapInteractor.calculateEntityLevelFor(cachedTiles: ArrayList<STPhotoMapGeojsonCache.Tile>) {
@@ -13,9 +14,8 @@ fun STPhotoMapInteractor.calculateEntityLevelFor(cachedTiles: ArrayList<STPhotoM
 
 fun STPhotoMapInteractor.prepareTilesForEntityLevel(): ArrayList<TileCoordinate> {
     val filteredList = this.visibleTiles.filter { tile ->
-        // TODO: Build url for tile
-        val keyUrl = ""
-        !this.entityLevelHandler.hasActiveDownload(keyUrl)
+        val uri = STPhotoMapUriBuilder().geojsonTileUri(tile)
+        !this.entityLevelHandler.hasActiveDownload(uri.first)
     }
     return ArrayList(filteredList)
 }
@@ -25,11 +25,9 @@ fun STPhotoMapInteractor.entityLevelGeojsonObjectsFor(tiles: ArrayList<TileCoord
 }
 
 fun STPhotoMapInteractor.entityLevelGeojsonObjectsFor(tile: TileCoordinate) {
-    // TODO: Build url for tile
-    val keyUrl = ""
-    val downloadUrl = ""
-    this.entityLevelHandler.addActiveDownload(keyUrl)
-    this.worker?.getGeojsonEntityLevel(tile, keyUrl, downloadUrl)
+    val uri = STPhotoMapUriBuilder().geojsonTileUri(tile)
+    this.entityLevelHandler.addActiveDownload(uri.first)
+    this.worker?.getGeojsonEntityLevel(tile, uri.first, uri.second)
 }
 
 fun STPhotoMapInteractor.isStillTileVisible(tileCoordinate: TileCoordinate): Boolean {
