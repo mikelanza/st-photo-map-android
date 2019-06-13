@@ -7,15 +7,13 @@ interface STPhotoMapEntityLevelHandlerDelegate {
     fun photoMapEntityLevelHandlerNewLocationLevel(level: EntityLevel)
 }
 
-class STPhotoMapEntityLevelHandler {
+class STPhotoMapEntityLevelHandler(val delegate: STPhotoMapEntityLevelHandlerDelegate?) {
     var entityLevel: EntityLevel
     var activeDownloads: ArrayList<String>
-    val delegate: STPhotoMapEntityLevelHandlerDelegate?
 
-    constructor(delegate: STPhotoMapEntityLevelHandlerDelegate?) {
+    init {
         this.entityLevel = EntityLevel.unknown
         this.activeDownloads = ArrayList()
-        this.delegate = delegate
     }
 
     fun hasActiveDownload(url: String): Boolean {
