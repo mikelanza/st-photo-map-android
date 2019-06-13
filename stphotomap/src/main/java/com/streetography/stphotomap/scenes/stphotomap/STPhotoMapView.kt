@@ -1,43 +1,38 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
 import android.content.Context
-import android.support.v4.app.FragmentActivity
 import android.util.AttributeSet
 import android.util.Log
 import android.widget.RelativeLayout
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.android.gms.maps.model.TileProvider
 import com.google.android.gms.maps.model.UrlTileProvider
-import com.streetography.stphotomap.R
 import com.streetography.stphotomap.extensions.GoogleMap.visibleTiles
+import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import java.lang.ref.WeakReference
 import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
+import kotlin.collections.ArrayList
 
 interface STPhotoMapDisplayLogic {
 }
 
-public class STPhotoMapView @JvmOverloads constructor(
+public open class STPhotoMapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr),
     STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener {
     var interactor: STPhotoMapBusinessLogic? = null
 
     var mapView: GoogleMap? = null
-    var supportMapFragment: SupportMapFragment? = null
 
     init {
         this.setup()
-
-        inflate(context, R.layout.st_photo_map_view, this)
-
-        this.findViews(context)
-        this.setupViews()
+        this.setupSubviews()
     }
 
     private fun setup() {
@@ -50,17 +45,15 @@ public class STPhotoMapView @JvmOverloads constructor(
         this.interactor = interactor
     }
 
-    private fun findViews(context: Context?) {
-        val fragmentManager = (context as FragmentActivity).supportFragmentManager
-        this.supportMapFragment = fragmentManager.findFragmentById(R.id.supportMapFragment) as? SupportMapFragment
+    private fun setupSubviews() {
+        this.setupMapView()
     }
 
-    private fun setupViews() {
-        this.setupMap()
-    }
-
-    private fun setupMap() {
-        this.supportMapFragment?.getMapAsync(this)
+    private fun setupMapView() {
+        val mapView = MapView(this.context)
+        mapView.getMapAsync(this)
+        mapView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        this.addView(mapView)
     }
 
     //region Google map interfaces
@@ -72,12 +65,12 @@ public class STPhotoMapView @JvmOverloads constructor(
     override fun onCameraIdle() {
         this.shouldUpdateVisibleTiles()
     }
+    //endregion
 
+    //region Business logic
     private fun shouldUpdateVisibleTiles() {
-        this.mapView?.let { googleMap ->
-            val request = STPhotoMapModels.VisibleTiles.Request(googleMap.visibleTiles())
-            this.interactor?.shouldUpdateVisibleTiles(request)
-        }
+        val visibleTiles: ArrayList<TileCoordinate> = this.mapView?.visibleTiles() ?: ArrayList()
+        this.interactor?.shouldUpdateVisibleTiles(STPhotoMapModels.VisibleTiles.Request(visibleTiles))
     }
     //endregion
 

@@ -1,46 +1,40 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
-import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapBusinessLogicSpy
 import junit.framework.TestCase
-import org.junit.Assert
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.runners.MockitoJUnitRunner
+import org.robolectric.RobolectricTestRunner
 
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(RobolectricTestRunner::class)
 class STPhotoMapViewTests: TestCase() {
     lateinit var sut: STPhotoMapView
     lateinit var interactorSpy: STPhotoMapBusinessLogicSpy
 
-    @Mock
-    private lateinit var mockContext: Context
-
     private fun setupSubjectUnderTest() {
-        this.sut = STPhotoMapView(this.mockContext)
+        this.sut = STPhotoMapView(ApplicationProvider.getApplicationContext())
 
         this.interactorSpy = STPhotoMapBusinessLogicSpy()
         this.sut.interactor = this.interactorSpy
     }
 
-    override fun setUp() {
+    @Before
+    public override fun setUp() {
         super.setUp()
         this.setupSubjectUnderTest()
     }
 
-    override fun tearDown() {
+    @After
+    public override fun tearDown() {
         super.tearDown()
     }
 
     @Test
-    fun test() {
-        assertTrue(true)
-    }
-
-    @Test
     fun testShouldUpdateVisibleTilesWhenCameraIdle() {
-        this.sut?.onCameraIdle()
-        Assert.assertTrue(this.interactorSpy.shouldUpdateVisibleTilesCalled)
+        this.sut.onCameraIdle()
+        assertTrue("The interactor should update visible tiles when camera is on idle.", this.interactorSpy.shouldUpdateVisibleTilesCalled)
     }
 }
