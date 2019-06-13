@@ -8,11 +8,12 @@ import android.widget.RelativeLayout
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.android.gms.maps.model.TileProvider
 import com.google.android.gms.maps.model.UrlTileProvider
 import com.streetography.stphotomap.R
-import com.streetography.stphotomap.extensions.GoogleMap.visibleTiles
+import com.streetography.stphotomap.extensions.google_map.visibleTiles
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import java.lang.ref.WeakReference
@@ -23,7 +24,7 @@ import java.util.*
 interface STPhotoMapDisplayLogic {
 }
 
-public class STPhotoMapView @JvmOverloads constructor(
+public open class STPhotoMapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr),
     STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener {
     var interactor: STPhotoMapBusinessLogic? = null
@@ -67,6 +68,8 @@ public class STPhotoMapView @JvmOverloads constructor(
     override fun onMapReady(googleMap: GoogleMap) {
         this.mapView = googleMap
         this.mapView?.addTileOverlay(getTileOverlayOptions())
+
+        this.setupGoogleMapStyle()
     }
 
     override fun onCameraIdle() {
@@ -80,6 +83,13 @@ public class STPhotoMapView @JvmOverloads constructor(
         }
     }
     //endregion
+
+    //region Google map style
+    private fun setupGoogleMapStyle() {
+        this.mapView?.setMapType(GoogleMap.MAP_TYPE_NONE)
+        this.mapView?.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, R.raw.google_map_style))
+    }
+    //end
 
     //region Tile overlay & provider
     private fun getTileOverlayOptions(): TileOverlayOptions {
