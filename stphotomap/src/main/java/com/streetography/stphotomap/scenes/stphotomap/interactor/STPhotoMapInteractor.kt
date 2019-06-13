@@ -1,11 +1,13 @@
 package com.streetography.stphotomap.scenes.stphotomap.interactor
 
+import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapModels
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapPresentationLogic
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapWorker
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapWorkerDelegate
 import com.streetography.stphotomap.scenes.stphotomap.entity_level.STPhotoMapEntityLevelHandler
+import com.streetography.stphotomap.scenes.stphotomap.entity_level.STPhotoMapEntityLevelHandlerDelegate
 import java.util.*
 
 interface STPhotoMapBusinessLogic {
@@ -14,7 +16,7 @@ interface STPhotoMapBusinessLogic {
 }
 
 class STPhotoMapInteractor: STPhotoMapBusinessLogic,
-    STPhotoMapWorkerDelegate {
+    STPhotoMapWorkerDelegate, STPhotoMapEntityLevelHandlerDelegate {
     var worker: STPhotoMapWorker?
     var presenter: STPhotoMapPresentationLogic? = null
 
@@ -25,7 +27,7 @@ class STPhotoMapInteractor: STPhotoMapBusinessLogic,
         this.worker = STPhotoMapWorker(this)
 
         this.visibleTiles = ArrayList<TileCoordinate>()
-        this.entityLevelHandler = STPhotoMapEntityLevelHandler()
+        this.entityLevelHandler = STPhotoMapEntityLevelHandler(this)
     }
 
     override fun shouldUpdateVisibleTiles(request: STPhotoMapModels.VisibleTiles.Request) {
@@ -35,4 +37,16 @@ class STPhotoMapInteractor: STPhotoMapBusinessLogic,
     override fun shouldDetermineEntityLevel() {
         TODO("not implemented")
     }
+
+    //region STPhotoMapEntityLevelHandlerDelegate
+
+    override fun photoMapEntityLevelHandler(newEntityLevel: EntityLevel) {
+        TODO("not implemented")
+    }
+
+    override fun photoMapEntityLevelHandlerNewLocationLevel(level: EntityLevel) {
+        TODO("not implemented")
+    }
+
+    //endregion
 }
