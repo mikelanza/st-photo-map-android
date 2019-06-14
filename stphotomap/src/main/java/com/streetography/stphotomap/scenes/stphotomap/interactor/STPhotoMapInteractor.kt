@@ -17,6 +17,7 @@ import com.streetography.stphotomap.scenes.stphotomap.entity_level.STPhotoMapEnt
 interface STPhotoMapBusinessLogic {
     fun shouldUpdateVisibleTiles(request: STPhotoMapModels.VisibleTiles.Request)
     fun shouldDetermineEntityLevel()
+    fun shouldCacheGeojsonObjects()
 }
 
 class STPhotoMapInteractor(): STPhotoMapBusinessLogic,
@@ -53,13 +54,11 @@ class STPhotoMapInteractor(): STPhotoMapBusinessLogic,
         this.handleLoadingStateForEntityLevel()
     }
 
-
     internal fun getVisibleCachedTiles(): ArrayList<STPhotoMapGeojsonCache.Tile> {
-        val cachedVisileTiles = this.visibleTiles.map { tile ->
+        return ArrayList(this.visibleTiles.mapNotNull { tile ->
             val uri = STPhotoMapUriBuilder().geojsonTileUri(tile)
             this.cacheHandler.cache.getTile(uri.first)
-        }
-        return ArrayList(cachedVisileTiles)
+        })
     }
 
     //region Entity level
@@ -91,6 +90,32 @@ class STPhotoMapInteractor(): STPhotoMapBusinessLogic,
     ) {
         this.entityLevelHandler.removeActiveDownload(keyUrl)
         this.handleLoadingStateForEntityLevel()
+    }
+    //endregion
+
+    //region Geojson caching
+    override fun shouldCacheGeojsonObjects() {
+        val tiles = this.prepareTilesForCaching()
+        this.cacheGeojsonObjects(tiles)
+    }
+
+    override fun successDidGetGeojsonTileForCaching(
+        tileCoordinate: TileCoordinate,
+        keyUrl: String,
+        downloadUrl: String,
+        geojsonObject: GeoJSONObject
+    ) {
+        this.cacheHandler.cache.addTile(STPhotoMapGeojsonCache.Tile(keyUrl, geojsonObject))
+        this.cacheHandler.removeActiveDownload(keyUrl)
+    }
+
+    override fun failureDidGetGeojsonTileForCaching(
+        tileCoordinate: TileCoordinate,
+        keyUrl: String,
+        downloadUrl: String,
+        error: OperationError
+    ) {
+        this.cacheHandler.removeActiveDownload(keyUrl)
     }
     //endregion
 }

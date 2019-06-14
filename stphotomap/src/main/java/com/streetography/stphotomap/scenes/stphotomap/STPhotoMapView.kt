@@ -107,6 +107,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     override fun onCameraIdle() {
         this.shouldUpdateVisibleTiles()
+        this.shouldCacheGeojsonObjects()
         this.shouldDetermineEntityLevel()
     }
     //endregion
@@ -145,6 +146,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     private fun shouldDetermineEntityLevel() {
         this.interactor?.shouldDetermineEntityLevel()
+    }
+
+    private fun shouldCacheGeojsonObjects() {
+        this.interactor?.shouldCacheGeojsonObjects()
     }
     //endregion
 

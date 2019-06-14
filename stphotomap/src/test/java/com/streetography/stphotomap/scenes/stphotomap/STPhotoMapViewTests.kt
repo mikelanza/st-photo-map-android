@@ -33,6 +33,7 @@ class STPhotoMapViewTests: TestCase() {
         super.tearDown()
     }
 
+    //region Business logic tests
     @Test
     fun testShouldUpdateVisibleTilesWhenCameraIdle() {
         this.sut.onCameraIdle()
@@ -45,6 +46,14 @@ class STPhotoMapViewTests: TestCase() {
         assertTrue("The interactor should determine entity level when camera is on idle.", this.interactorSpy.shouldDetermineEntityLevelCalled)
     }
 
+    @Test
+    fun testShouldCacheGeojsonObjectsWhenCameraIdle() {
+        this.sut.onCameraIdle()
+        assertTrue(this.interactorSpy.shouldCacheGeojsonObjectsCalled)
+    }
+    //endregion
+
+    //region Display logic tests
     @Test
     fun testDisplayLoadingState() {
         this.sut.progressBar?.visibility = View.GONE
@@ -70,4 +79,5 @@ class STPhotoMapViewTests: TestCase() {
             assertEquals(0, this.sut.progressBar?.progress)
         }
     }
+    //endregion
 }

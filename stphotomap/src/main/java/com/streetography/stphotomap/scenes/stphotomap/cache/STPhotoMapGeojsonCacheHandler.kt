@@ -24,4 +24,15 @@ class STPhotoMapGeojsonCacheHandler() {
     fun removeAllActiveDownloads() {
         this.activeDownloads.clear()
     }
+
+    fun shouldPrepareTileForCaching(url: String): Boolean {
+        if (this.hasActiveDownload(url)) {
+            return false
+        }
+        return this.cache.getTile(url) == null
+    }
+
+    fun activeDownloadCount(): Int {
+        return this.activeDownloads.size
+    }
 }

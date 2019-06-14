@@ -18,21 +18,20 @@ class STPhotoMapSeeds {
     val location = STLocation(50.0, 50.0)
 
     fun geojsonObject(): GeoJSONObject {
-        val inputStream = this.javaClass.classLoader?.getResourceAsStream("geojson_object.json")
-        val inputString = inputStream?.bufferedReader().use { it?.readText() }
-        inputStream?.close()
-
-        val jsonObject = JSONObject(inputString)
+        val jsonObject = this.loadJSONObjectFromFile("geojson_object.json")
         return GeoJSON().parse(jsonObject)
-
     }
 
     fun locationGeojsonObject(): GeoJSONObject {
-        val inputStream = this.javaClass.classLoader?.getResourceAsStream("geojson_object_location.json")
+        val jsonObject = this.loadJSONObjectFromFile("geojson_object_location.json")
+        return GeoJSON().parse(jsonObject)
+    }
+
+    private fun loadJSONObjectFromFile(filename: String): JSONObject {
+        val inputStream = this.javaClass.classLoader?.getResourceAsStream(filename)
         val inputString = inputStream?.bufferedReader().use { it?.readText() }
         inputStream?.close()
 
-        val jsonObject = JSONObject(inputString)
-        return GeoJSON().parse(jsonObject)
+        return JSONObject(inputString)
     }
 }

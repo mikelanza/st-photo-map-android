@@ -6,6 +6,7 @@ import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusin
 class STPhotoMapBusinessLogicSpy: STPhotoMapBusinessLogic {
     var shouldUpdateVisibleTilesCalled: Boolean = false
     var shouldDetermineEntityLevelCalled: Boolean = false
+    var shouldCacheGeojsonObjectsCalled: Boolean = false
 
     override fun shouldUpdateVisibleTiles(request: STPhotoMapModels.VisibleTiles.Request) {
         this.shouldUpdateVisibleTilesCalled = true
@@ -13,5 +14,9 @@ class STPhotoMapBusinessLogicSpy: STPhotoMapBusinessLogic {
 
     override fun shouldDetermineEntityLevel() {
         this.shouldDetermineEntityLevelCalled = true
+    }
+
+    override fun shouldCacheGeojsonObjects() {
+        this.shouldCacheGeojsonObjectsCalled = true
     }
 }

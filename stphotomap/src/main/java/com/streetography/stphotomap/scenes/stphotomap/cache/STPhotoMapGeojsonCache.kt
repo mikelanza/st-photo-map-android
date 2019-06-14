@@ -21,16 +21,11 @@ class STPhotoMapGeojsonCache() {
     }
 
     fun getTiles(urls: ArrayList<String>): ArrayList<Tile> {
-        val filteredTiles =  this.tiles.filter { tile ->
-            urls.contains(tile.keyUrl)
-        }
-        return ArrayList(filteredTiles)
+        return ArrayList(this.tiles.filter { urls.contains(it.keyUrl) })
     }
 
-    fun getTile(keyUrl: String): Tile {
-        return this.tiles.first { tile ->
-            tile.keyUrl == keyUrl
-        }
+    fun getTile(keyUrl: String): Tile? {
+        return this.tiles.firstOrNull { it.keyUrl == keyUrl }
     }
 
     fun tileCount(): Int {
