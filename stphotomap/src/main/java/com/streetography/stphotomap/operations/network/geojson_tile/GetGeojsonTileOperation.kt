@@ -1,6 +1,7 @@
 package com.streetography.stphotomap.operations.network.geojson_tile
 
 import com.streetography.stphotomap.models.geojson.GeoJSON
+import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
 import com.streetography.stphotomap.operations.base.errors.OperationError
 import com.streetography.stphotomap.operations.base.operations.Operation
 import com.streetography.stphotomap.operations.base.results.OperationResult
@@ -19,8 +20,8 @@ class GetGeojsonTileOperation(
 ) : Operation() {
     private var call: WeakReference<Call>? = null
 
-    override fun run() {
-        super.run()
+    override fun run(completion: (() -> Unit)?) {
+        super.run(completion)
 
         if (this.shouldCancelOperation()) return
 
@@ -39,16 +40,16 @@ class GetGeojsonTileOperation(
                 try {
                     val jsonObject = JSONObject(jsonData)
                     val geoJSONObject = GeoJSON().parse(jsonObject)
-                    operationCompletionHandler.onSuccess(GetGeojsonTileOperationModel.Response(geoJSONObject))
+                    shouldCompleteOperationWithSuccess(geoJSONObject)
                 } catch (error: JSONException) {
-                    operationCompletionHandler.onFailure(OperationError.CANNOT_PARSE_RESPONSE)
+                    shouldCompleteOperationWithFailure(OperationError.CANNOT_PARSE_RESPONSE)
                 }
 
                 response.body()?.close()
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                operationCompletionHandler.onFailure(OperationError.NO_INTERNET_CONNECTION)
+                shouldCompleteOperationWithFailure(OperationError.NO_INTERNET_CONNECTION)
             }
         })
     }
@@ -60,9 +61,19 @@ class GetGeojsonTileOperation(
 
     private fun shouldCancelOperation(): Boolean {
         if (this.isCancelled) {
-            this.operationCompletionHandler.onFailure(OperationError.OPERATION_CANCELLED)
+            this.shouldCompleteOperationWithFailure(OperationError.OPERATION_CANCELLED)
             return true
         }
         return false
+    }
+
+    private fun shouldCompleteOperationWithSuccess(geojsonObject: GeoJSONObject) {
+        this.operationCompletionHandler.onSuccess(GetGeojsonTileOperationModel.Response(geojsonObject))
+        this.completion?.invoke()
+    }
+
+    private fun shouldCompleteOperationWithFailure(error: OperationError) {
+        this.operationCompletionHandler.onFailure(error)
+        this.completion?.invoke()
     }
 }

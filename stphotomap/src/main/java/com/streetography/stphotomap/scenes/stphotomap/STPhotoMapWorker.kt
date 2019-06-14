@@ -2,6 +2,7 @@ package com.streetography.stphotomap.scenes.stphotomap
 import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.operations.base.errors.OperationError
+import com.streetography.stphotomap.operations.base.operations.OperationQueue
 import com.streetography.stphotomap.operations.base.results.OperationResult
 import com.streetography.stphotomap.operations.network.geojson_tile.GetGeojsonTileOperation
 import com.streetography.stphotomap.operations.network.geojson_tile.GetGeojsonTileOperationModel
@@ -16,6 +17,7 @@ interface STPhotoMapWorkerDelegate {
 }
 
 open class STPhotoMapWorker(val delegate: STPhotoMapWorkerDelegate?) {
+    private var geojsonTileCachingQueue: OperationQueue = OperationQueue()
 
     //region Get geojson for entity level
     fun getGeojsonEntityLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
@@ -27,6 +29,7 @@ open class STPhotoMapWorker(val delegate: STPhotoMapWorkerDelegate?) {
     }
     //endregion
 
+    //region Get geojson for caching
     open fun getGeojsonTileForCaching(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
         val model = GetGeojsonTileOperationModel.Request(tileCoordinate, downloadUrl)
         val operation = GetGeojsonTileOperation(model, object: OperationResult<GetGeojsonTileOperationModel.Response> {
@@ -38,6 +41,7 @@ open class STPhotoMapWorker(val delegate: STPhotoMapWorkerDelegate?) {
                 delegate?.failureDidGetGeojsonTileForCaching(tileCoordinate, keyUrl, downloadUrl, error)
             }
         })
-        operation.run()
+        this.geojsonTileCachingQueue.addOperation(operation)
     }
+    //endregion
 }
