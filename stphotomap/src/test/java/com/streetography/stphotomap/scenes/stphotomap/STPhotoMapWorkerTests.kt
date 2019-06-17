@@ -36,4 +36,13 @@ class STPhotoMapWorkerTests: TestCase() {
         this.sut.getGeojsonTileForCaching(STPhotoMapSeeds().tileCoordinate, STPhotoMapSeeds().imageUrl, STPhotoMapSeeds().imageUrl)
         assertTrue(operationQueueSpy.addOperationCalled)
     }
+
+    @Test
+    fun testGetGeojsonTileForEntityLevel() {
+        val operationQueueSpy = OperationQueueSpy()
+        this.sut.geojsonEntityLevelQueue = operationQueueSpy
+
+        this.sut.getGeojsonEntityLevel(STPhotoMapSeeds().tileCoordinate, STPhotoMapSeeds().imageUrl, STPhotoMapSeeds().imageUrl)
+        assertTrue(operationQueueSpy.addOperationCalled)
+    }
 }
