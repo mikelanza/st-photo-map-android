@@ -21,14 +21,13 @@ import com.google.android.gms.maps.model.UrlTileProvider
 import com.streetography.stphotomap.R
 import com.streetography.stphotomap.extensions.google_map.visibleTiles
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
+import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import com.streetography.stphotomap.scenes.stphotomap.views.STEntityLevelView
 import java.lang.ref.WeakReference
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.*
-import kotlin.collections.ArrayList
 
 interface STPhotoMapDisplayLogic {
     fun displayLoadingState()
@@ -139,16 +138,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
     private fun getTileProvider(): TileProvider {
         return object : UrlTileProvider(512, 512) {
             override fun getTileUrl(x: Int, y: Int, zoom: Int): URL {
-                val s = String.format(
-                    Locale.getDefault(),
-                    "https://tilesdev.streetography.com/tile/%d/%d/%d.jpeg?basemap=yes",
-                    zoom, x, y
-                )
-
+                val uri = STPhotoMapUriBuilder().jpegTileUri(TileCoordinate(zoom, x, y)).second
                 Log.i("STPhotoMapView", String.format("x=%d, y=%d z=%d", x, y, zoom));
-
                 try {
-                    return URL(s)
+                    return URL(uri)
                 } catch (e: MalformedURLException) {
                     throw AssertionError(e)
                 }
