@@ -47,14 +47,11 @@ class STPhotoMapWorkerTests: TestCase() {
     }
 
     @Test
-    fun testCancellAllGeojsonTileForEntityLevel() {
+    fun testCancelAllGeojsonTileForEntityLevel() {
         val operationQueueSpy = OperationQueueSpy()
         this.sut.geojsonEntityLevelQueue = operationQueueSpy
 
-        this.sut.getGeojsonEntityLevel(STPhotoMapSeeds().tileCoordinate, STPhotoMapSeeds().imageUrl, STPhotoMapSeeds().imageUrl)
-        assertTrue(operationQueueSpy.addOperationCalled)
-
         this.sut.cancelAllGeojsonEntityLevelOperations()
-        assertEquals(0, this.sut.geojsonEntityLevelQueue.operationCount)
+        assertTrue(operationQueueSpy.cancelAllOperationsCalled)
     }
 }
