@@ -10,21 +10,21 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.streetography.stphotomap.R
 
-public class STEntityLevelView @JvmOverloads constructor(
+open public class STEntityLevelView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr) {
     private var containerLayout: LinearLayout? = null
     private var titleTextView: TextView? = null
 
-    public fun setImage(resourceId: Int) {
+    open fun setImage(resourceId: Int) {
         val drawable = ContextCompat.getDrawable(this.context, resourceId)
         this.titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
     }
 
-    public fun setTitle(title: String?) {
-        this.titleTextView?.text = title
+    open fun setTitle(titleId: Int) {
+        this.titleTextView?.text = resources.getString(titleId)
     }
 
-    public fun show() {
+    open fun show() {
         fadeIn()
         postDelayed({ fadeOut() }, showDuration)
     }

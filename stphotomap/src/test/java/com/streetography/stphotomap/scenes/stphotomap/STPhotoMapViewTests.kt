@@ -2,6 +2,8 @@ package com.streetography.stphotomap.scenes.stphotomap
 
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
+import com.streetography.stphotomap.R
+import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STEntityLevelViewSpy
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapBusinessLogicSpy
 import junit.framework.TestCase
 import org.junit.After
@@ -14,12 +16,15 @@ import org.robolectric.RobolectricTestRunner
 class STPhotoMapViewTests: TestCase() {
     lateinit var sut: STPhotoMapView
     lateinit var interactorSpy: STPhotoMapBusinessLogicSpy
+    lateinit var entityLevelViewSpy: STEntityLevelViewSpy
 
     private fun setupSubjectUnderTest() {
         this.sut = STPhotoMapView(ApplicationProvider.getApplicationContext())
 
         this.interactorSpy = STPhotoMapBusinessLogicSpy()
         this.sut.interactor = this.interactorSpy
+        this.entityLevelViewSpy = STEntityLevelViewSpy(ApplicationProvider.getApplicationContext())
+        this.sut.entityLevelView = this.entityLevelViewSpy
     }
 
     @Before
@@ -78,6 +83,16 @@ class STPhotoMapViewTests: TestCase() {
             assertEquals(View.GONE, this.sut.progressBar?.visibility)
             assertEquals(0, this.sut.progressBar?.progress)
         }
+    }
+
+    @Test
+    fun testDisplayEntityLevel() {
+        val viewModel = STPhotoMapModels.EntityZoomLevel.ViewModel(R.string.st_photo_map_block_level_title, R.drawable.st_entity_level_location)
+        this.sut.displayEntityLevel(viewModel)
+
+        assertTrue(this.entityLevelViewSpy.setTitleCalled)
+        assertTrue(this.entityLevelViewSpy.setImageCalled)
+        assertTrue(this.entityLevelViewSpy.showCalled)
     }
     //endregion
 }

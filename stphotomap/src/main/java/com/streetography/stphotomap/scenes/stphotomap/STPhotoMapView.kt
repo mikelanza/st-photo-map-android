@@ -23,6 +23,7 @@ import com.streetography.stphotomap.extensions.google_map.visibleTiles
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
+import com.streetography.stphotomap.scenes.stphotomap.views.STEntityLevelView
 import java.lang.ref.WeakReference
 import java.net.MalformedURLException
 import java.net.URL
@@ -32,6 +33,8 @@ import kotlin.collections.ArrayList
 interface STPhotoMapDisplayLogic {
     fun displayLoadingState()
     fun displayNotLoadingState()
+
+    fun displayEntityLevel(viewModel: STPhotoMapModels.EntityZoomLevel.ViewModel)
 }
 
 public open class STPhotoMapView @JvmOverloads constructor(
@@ -39,6 +42,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
     STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener {
     var interactor: STPhotoMapBusinessLogic? = null
 
+    var entityLevelView: STEntityLevelView? = null
     var mapView: GoogleMap? = null
     var progressBar: ProgressBar? = null
 
@@ -61,6 +65,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
     private fun setupSubviews() {
         this.setupMapView()
         this.setupProgressBar()
+        this.setupEntityView()
     }
 
     private fun setupMapView() {
@@ -88,6 +93,12 @@ public open class STPhotoMapView @JvmOverloads constructor(
         drawable?.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN)
         this.progressBar?.indeterminateDrawable = drawable
         this.addView(this.progressBar)
+    }
+
+    private fun setupEntityView() {
+        this.entityLevelView = STEntityLevelView(this.context, null)
+        this.entityLevelView?.visibility = View.GONE
+
     }
     //endregion
 
@@ -175,6 +186,14 @@ public open class STPhotoMapView @JvmOverloads constructor(
             } else {
                 this.progressBar?.progress = 0
             }
+        }
+    }
+
+    override fun displayEntityLevel(viewModel: STPhotoMapModels.EntityZoomLevel.ViewModel) {
+        this.post {
+            this.entityLevelView?.setTitle(viewModel.titleId)
+            this.entityLevelView?.setImage(viewModel.imageResourceId)
+            this.entityLevelView?.show()
         }
     }
     //endregion

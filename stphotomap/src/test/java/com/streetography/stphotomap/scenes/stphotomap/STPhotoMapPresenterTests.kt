@@ -1,10 +1,16 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
+import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapDisplayLogicSpy
 import junit.framework.TestCase
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import java.lang.ref.WeakReference
 
+@RunWith(RobolectricTestRunner::class)
 class STPhotoMapPresenterTests: TestCase() {
     lateinit var sut: STPhotoMapPresenter
     lateinit var displayerSpy: STPhotoMapDisplayLogicSpy
@@ -16,12 +22,14 @@ class STPhotoMapPresenterTests: TestCase() {
         this.sut.displayer = WeakReference(this.displayerSpy)
     }
 
-    override fun setUp() {
+    @Before
+    public override fun setUp() {
         super.setUp()
         this.setupSubjectUnderTest()
     }
 
-    override fun tearDown() {
+    @After
+    public override fun tearDown() {
         super.tearDown()
     }
 
@@ -35,5 +43,12 @@ class STPhotoMapPresenterTests: TestCase() {
     fun testPresentNotLoadingState() {
         this.sut.presentNotLoadingState()
         assertTrue(this.displayerSpy.displayNotLoadingStateCalled)
+    }
+
+    @Test
+    fun testPresentEntityLevel() {
+        val response = STPhotoMapModels.EntityZoomLevel.Response(EntityLevel.block)
+        this.sut.presentEntityLevel(response)
+        assertTrue(this.displayerSpy.displayEntityLevelCalled)
     }
 }

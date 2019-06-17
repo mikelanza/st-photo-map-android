@@ -20,11 +20,11 @@ open class STPhotoMapWorker(val delegate: STPhotoMapWorkerDelegate?) {
     private var geojsonTileCachingQueue: OperationQueue = OperationQueue()
 
     //region Get geojson for entity level
-    fun getGeojsonEntityLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
+    open fun getGeojsonEntityLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
         // TODO: Implement
     }
 
-    fun cancelAllGeojsonEntityLevelOperations() {
+    open fun cancelAllGeojsonEntityLevelOperations() {
         // TODO: Implement
     }
     //endregion

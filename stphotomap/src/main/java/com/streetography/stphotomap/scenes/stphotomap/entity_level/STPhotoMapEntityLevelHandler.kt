@@ -37,8 +37,8 @@ class STPhotoMapEntityLevelHandler(val delegate: STPhotoMapEntityLevelHandlerDel
             this.entityLevel = entityLevel
 
             when(entityLevel) {
-                EntityLevel.location -> this.delegate?.photoMapEntityLevelHandler(entityLevel)
-                else -> this.delegate?.photoMapEntityLevelHandlerNewLocationLevel(entityLevel)
+                EntityLevel.location -> this.delegate?.photoMapEntityLevelHandlerNewLocationLevel(entityLevel)
+                else -> this.delegate?.photoMapEntityLevelHandler(entityLevel)
             }
         }
     }

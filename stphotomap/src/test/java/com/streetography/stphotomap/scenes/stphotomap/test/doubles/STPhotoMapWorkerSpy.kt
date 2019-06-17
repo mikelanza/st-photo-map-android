@@ -14,6 +14,11 @@ class STPhotoMapWorkerSpy(delegate: STPhotoMapWorkerDelegate?): STPhotoMapWorker
     var shouldFailGetGeojsonTileForCaching: Boolean = false
     var getGeojsonTileForCachingCalled: Boolean = false
 
+    var shouldFailGetGeojsonTileForEntityLevel: Boolean = false
+    var getGeojsonTileForEntityLevelCalled: Boolean = false
+    var cancelAllGeojsonEntityLevelOperationsCalled: Boolean = false
+
+
     override fun getGeojsonTileForCaching(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
         this.getGeojsonTileForCachingCalled = true
 
@@ -33,4 +38,30 @@ class STPhotoMapWorkerSpy(delegate: STPhotoMapWorkerDelegate?): STPhotoMapWorker
             this.delegate?.successDidGetGeojsonTileForCaching(tileCoordinate, keyUrl, downloadUrl, this.geojsonObject)
         }
     }
+
+    //region Geojson for entity level
+    override fun getGeojsonEntityLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
+        this.getGeojsonTileForEntityLevelCalled = true
+
+        if (this.delay == 0L)  {
+            this.didGetGeojsonTileForEntityLevel(tileCoordinate, keyUrl, downloadUrl)
+        } else {
+            Handler().postDelayed({
+                this.didGetGeojsonTileForEntityLevel(tileCoordinate, keyUrl, downloadUrl)
+            }, this.delay)
+        }
+    }
+
+    private fun didGetGeojsonTileForEntityLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
+        if (this.shouldFailGetGeojsonTileForEntityLevel) {
+            this.delegate?.failureDidGetGeojsonTileForEntityLevel(tileCoordinate, keyUrl, downloadUrl, OperationError.NO_DATA_AVAILABLE)
+        } else {
+            this.delegate?.successDidGetGeojsonTileForEntityLevel(tileCoordinate, keyUrl, downloadUrl, this.geojsonObject)
+        }
+    }
+
+    override fun cancelAllGeojsonEntityLevelOperations() {
+        this.cancelAllGeojsonEntityLevelOperationsCalled = true
+    }
+    //endregion
 }

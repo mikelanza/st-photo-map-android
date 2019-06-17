@@ -64,12 +64,13 @@ class STPhotoMapInteractor(): STPhotoMapBusinessLogic,
     //region Entity level
     override fun photoMapEntityLevelHandler(newEntityLevel: EntityLevel) {
         this.worker?.cancelAllGeojsonEntityLevelOperations()
-
-        // TODO: Present entity level
+        this.presenter?.presentEntityLevel(STPhotoMapModels.EntityZoomLevel.Response(newEntityLevel))
     }
 
     override fun photoMapEntityLevelHandlerNewLocationLevel(level: EntityLevel) {
         this.worker?.cancelAllGeojsonEntityLevelOperations()
+
+        this.presenter?.presentEntityLevel(STPhotoMapModels.EntityZoomLevel.Response(level))
     }
 
     override fun successDidGetGeojsonTileForEntityLevel(
