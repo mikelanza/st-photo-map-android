@@ -69,8 +69,6 @@ public open class STPhotoMapView @JvmOverloads constructor(
     }
 
     private fun setupMapView() {
-        this.setupMapViewListeners()
-
         val options = GoogleMapOptions()
         options.mapType(GoogleMap.MAP_TYPE_NONE)
             .compassEnabled(false)
@@ -123,6 +121,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.mapView?.addTileOverlay(getTileOverlayOptions())
 
         this.setupGoogleMapStyle()
+        this.setupMapViewListeners()
     }
 
     override fun onCameraIdle() {
