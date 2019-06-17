@@ -88,7 +88,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     private fun setupProgressBar() {
         this.progressBar = ProgressBar(this.context, null, android.R.attr.progressBarStyleHorizontal)
-        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         layoutParams.addRule(ALIGN_PARENT_TOP)
         this.progressBar?.layoutParams = layoutParams
         this.progressBar?.progress = 0
