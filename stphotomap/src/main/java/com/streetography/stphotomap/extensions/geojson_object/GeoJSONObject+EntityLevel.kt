@@ -11,11 +11,10 @@ val GeoJSONObject.entityLevel: EntityLevel
     get() {
         when (getGeoJSONType()) {
             GeoJSONType.featureCollection -> {
-                val feature = (this as? GeoJSONFeatureCollection)?.features?.first()
+                val feature = (this as? GeoJSONFeatureCollection)?.features?.firstOrNull()
                 feature?.entityLevel?.let {
                     return it
                 } ?: return EntityLevel.unknown
-
             }
             GeoJSONType.feature -> (this as? GeoJSONFeature)?.entityLevel?.let {
                 return it

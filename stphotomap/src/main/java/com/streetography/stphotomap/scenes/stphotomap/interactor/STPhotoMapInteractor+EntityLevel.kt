@@ -8,8 +8,10 @@ import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuil
 import com.streetography.stphotomap.scenes.stphotomap.cache.STPhotoMapGeojsonCache
 
 fun STPhotoMapInteractor.calculateEntityLevelFor(cachedTiles: ArrayList<STPhotoMapGeojsonCache.Tile>) {
-    val entityLevel = cachedTiles.first().geojsonObject.entityLevel
-    this.entityLevelHandler.change(entityLevel)
+    val entityLevel = cachedTiles.firstOrNull()?.geojsonObject?.entityLevel
+    entityLevel?.let {
+        this.entityLevelHandler.change(entityLevel)
+    }
 }
 
 fun STPhotoMapInteractor.prepareTilesForEntityLevel(): ArrayList<TileCoordinate> {
