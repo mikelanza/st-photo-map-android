@@ -18,14 +18,25 @@ interface STPhotoMapWorkerDelegate {
 
 open class STPhotoMapWorker(val delegate: STPhotoMapWorkerDelegate?) {
     var geojsonTileCachingQueue: OperationQueue = OperationQueue()
+    var geojsonEntityLevelQueue: OperationQueue = OperationQueue()
 
     //region Get geojson for entity level
     open fun getGeojsonEntityLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
-        // TODO: Implement
+        val model = GetGeojsonTileOperationModel.Request(tileCoordinate, downloadUrl)
+        val operation = GetGeojsonTileOperation(model, object: OperationResult<GetGeojsonTileOperationModel.Response> {
+            override fun onSuccess(value: GetGeojsonTileOperationModel.Response) {
+                delegate?.successDidGetGeojsonTileForEntityLevel(tileCoordinate, keyUrl, downloadUrl, value.geoJSONObject)
+            }
+
+            override fun onFailure(error: OperationError) {
+                delegate?.failureDidGetGeojsonTileForEntityLevel(tileCoordinate, keyUrl, downloadUrl, error)
+            }
+        })
+        this.geojsonEntityLevelQueue.addOperation(operation)
     }
 
     open fun cancelAllGeojsonEntityLevelOperations() {
-        // TODO: Implement
+        this.geojsonEntityLevelQueue.cancelAllOperations()
     }
     //endregion
 
