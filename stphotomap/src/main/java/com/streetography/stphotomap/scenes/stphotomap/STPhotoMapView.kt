@@ -69,6 +69,8 @@ public open class STPhotoMapView @JvmOverloads constructor(
     }
 
     private fun setupMapView() {
+        this.setupMapViewListeners()
+
         val options = GoogleMapOptions()
         options.mapType(GoogleMap.MAP_TYPE_NONE)
             .compassEnabled(false)
@@ -81,6 +83,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
         mapView.getMapAsync(this)
         mapView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         this.addView(mapView)
+    }
+
+    private fun setupMapViewListeners() {
+        this.mapView?.setOnCameraIdleListener(this)
     }
 
     private fun setupProgressBar() {
@@ -102,7 +108,6 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.entityLevelView?.layoutParams = layoutParams
         this.entityLevelView?.visibility = View.GONE
         this.addView(this.entityLevelView)
-
     }
     //endregion
 
