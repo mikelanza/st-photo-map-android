@@ -97,7 +97,11 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     private fun setupEntityView() {
         this.entityLevelView = STEntityLevelView(this.context, null)
+        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        layoutParams.addRule(CENTER_IN_PARENT, TRUE)
+        this.entityLevelView?.layoutParams = layoutParams
         this.entityLevelView?.visibility = View.GONE
+        this.addView(this.entityLevelView)
 
     }
     //endregion
