@@ -88,20 +88,23 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     private fun setupProgressBar() {
         this.progressBar = ProgressBar(this.context, null, android.R.attr.progressBarStyleHorizontal)
-        this.progressBar?.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        layoutParams.addRule(ALIGN_PARENT_TOP)
+        this.progressBar?.layoutParams = layoutParams
         this.progressBar?.progress = 0
         this.progressBar?.max = 100
         this.progressBar?.visibility = View.GONE
-        val drawable = this.progressBar?.indeterminateDrawable?.mutate()
+        this.progressBar?.isIndeterminate = false
+        val drawable = this.progressBar?.progressDrawable?.mutate()
         drawable?.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN)
-        this.progressBar?.indeterminateDrawable = drawable
+        this.progressBar?.progressDrawable = drawable
         this.addView(this.progressBar)
     }
 
     private fun setupEntityView() {
         this.entityLevelView = STEntityLevelView(this.context, null)
-        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-        layoutParams.addRule(CENTER_IN_PARENT, TRUE)
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        layoutParams.addRule(CENTER_IN_PARENT)
         this.entityLevelView?.layoutParams = layoutParams
         this.entityLevelView?.visibility = View.GONE
         this.addView(this.entityLevelView)

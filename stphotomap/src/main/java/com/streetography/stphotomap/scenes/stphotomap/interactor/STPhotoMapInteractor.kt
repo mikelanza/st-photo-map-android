@@ -20,7 +20,7 @@ interface STPhotoMapBusinessLogic {
     fun shouldCacheGeojsonObjects()
 }
 
-class STPhotoMapInteractor(): STPhotoMapBusinessLogic,
+class STPhotoMapInteractor : STPhotoMapBusinessLogic,
     STPhotoMapWorkerDelegate, STPhotoMapEntityLevelHandlerDelegate {
     var worker: STPhotoMapWorker?
     var presenter: STPhotoMapPresentationLogic? = null

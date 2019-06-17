@@ -10,7 +10,7 @@ import com.streetography.stphotomap.scenes.stphotomap.cache.STPhotoMapGeojsonCac
 fun STPhotoMapInteractor.calculateEntityLevelFor(cachedTiles: ArrayList<STPhotoMapGeojsonCache.Tile>) {
     val entityLevel = cachedTiles.firstOrNull()?.geojsonObject?.entityLevel
     entityLevel?.let {
-        this.entityLevelHandler.change(entityLevel)
+        this.entityLevelHandler.change(it)
     }
 }
 
@@ -23,7 +23,7 @@ fun STPhotoMapInteractor.prepareTilesForEntityLevel(): ArrayList<TileCoordinate>
 }
 
 fun STPhotoMapInteractor.entityLevelGeojsonObjectsFor(tiles: ArrayList<TileCoordinate>) {
-    tiles.forEach({ this.entityLevelGeojsonObjectsFor(it) })
+    tiles.forEach { this.entityLevelGeojsonObjectsFor(it) }
 }
 
 fun STPhotoMapInteractor.entityLevelGeojsonObjectsFor(tile: TileCoordinate) {
@@ -33,7 +33,7 @@ fun STPhotoMapInteractor.entityLevelGeojsonObjectsFor(tile: TileCoordinate) {
 }
 
 fun STPhotoMapInteractor.isStillTileVisible(tileCoordinate: TileCoordinate): Boolean {
-    return  this.visibleTiles.contains(tileCoordinate)
+    return this.visibleTiles.contains(tileCoordinate)
 }
 
 fun STPhotoMapInteractor.didGetGeojsonTileForEntityLevel(tileCoordinate: TileCoordinate, geojsonObject: GeoJSONObject) {
