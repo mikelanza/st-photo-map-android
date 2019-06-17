@@ -57,6 +57,7 @@ class GetGeojsonTileOperation(
     override fun cancel() {
         super.cancel()
         this.call?.get()?.cancel()
+        this.shouldCancelOperation()
     }
 
     private fun shouldCancelOperation(): Boolean {
