@@ -17,7 +17,7 @@ interface STPhotoMapWorkerDelegate {
 }
 
 open class STPhotoMapWorker(val delegate: STPhotoMapWorkerDelegate?) {
-    private var geojsonTileCachingQueue: OperationQueue = OperationQueue()
+    var geojsonTileCachingQueue: OperationQueue = OperationQueue()
 
     //region Get geojson for entity level
     fun getGeojsonEntityLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {

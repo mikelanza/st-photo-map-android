@@ -14,6 +14,7 @@ class STPhotoMapSeeds {
         TileCoordinate(11, 2, 4),
         TileCoordinate(12, 3, 5))
 
+    val imageUrl = "https://strtgrph.s3-us-west-1.amazonaws.com/processed/81d50005056139e81c0ddd2d98e0ec0e_60_60.jpg"
     val coordinate = LatLng(50.0, 50.0)
     val location = STLocation(50.0, 50.0)
 
