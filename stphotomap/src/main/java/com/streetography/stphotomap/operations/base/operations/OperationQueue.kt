@@ -1,16 +1,17 @@
 package com.streetography.stphotomap.operations.base.operations
 
-class OperationQueue {
+open class OperationQueue {
     private var operations: ArrayList<Operation> = ArrayList()
+    var operationCount = this.operations.size
 
-    fun addOperation(operation: Operation) {
+    open fun addOperation(operation: Operation) {
         this.operations.add(operation)
         operation.run {
             this.operations.remove(operation)
         }
     }
 
-    fun cancelAllOperations() {
+    open fun cancelAllOperations() {
         this.operations.forEach { it.cancel() }
         this.operations.clear()
     }
