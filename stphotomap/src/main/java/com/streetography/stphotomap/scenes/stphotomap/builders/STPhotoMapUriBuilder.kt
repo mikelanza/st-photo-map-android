@@ -1,6 +1,7 @@
 package com.streetography.stphotomap.scenes.stphotomap.builders
 
 import android.net.Uri
+import com.streetography.stphotomap.BuildConfig
 import com.streetography.stphotomap.extensions.uri.addParameters
 import com.streetography.stphotomap.extensions.uri.excludeParameter
 import com.streetography.stphotomap.models.parameters.KeyValue
@@ -9,13 +10,11 @@ import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 
 class STPhotoMapUriBuilder {
     fun geojsonTileUri(tileCoordinate: TileCoordinate, parameters: ArrayList<KeyValue> = Parameters.defaultParameters()): Pair<String, String> {
-        val template = "https://tilesdev.streetography.com/tile/%d/%d/%d.geojson"
-        return this.tileUri(template, tileCoordinate, parameters)
+        return this.tileUri(BuildConfig.GEOJSON_TILE_URL, tileCoordinate, parameters)
     }
 
     fun jpegTileUri(tileCoordinate: TileCoordinate, parameters: ArrayList<KeyValue> = Parameters.defaultParameters()): Pair<String, String> {
-        val template = "https://tilesdev.streetography.com/tile/%d/%d/%d.jpeg"
-        return this.tileUri(template, tileCoordinate, parameters)
+        return this.tileUri(BuildConfig.JPEG_TILE_URL, tileCoordinate, parameters)
     }
 
     private fun tileUri(template: String, tileCoordinate: TileCoordinate, parameters: ArrayList<KeyValue> = Parameters.defaultParameters()): Pair<String, String> {

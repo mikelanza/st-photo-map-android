@@ -19,6 +19,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField('String', 'GEOJSON_TILE_URL', '"https://tiles.streetography.com/tile/%d/%d/%d.geojson"')
+            buildConfigField('String', 'JPEG_TILE_URL', '"https://tiles.streetography.com/tile/%d/%d/%d.jpeg"')
+        }
+
+        debug {
+            buildConfigField('String', 'GEOJSON_TILE_URL', '"https://tiles.streetography.com/tile/%d/%d/%d.geojson"')
+            buildConfigField('String', 'JPEG_TILE_URL', '"https://tiles.streetography.com/tile/%d/%d/%d.jpeg"')
         }
     }
 
@@ -27,7 +34,6 @@ android {
             includeAndroidResources = true
         }
     }
-
 }
 
 dependencies {

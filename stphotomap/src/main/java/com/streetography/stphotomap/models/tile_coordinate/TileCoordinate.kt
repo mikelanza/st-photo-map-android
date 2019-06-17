@@ -18,7 +18,7 @@ class TileCoordinate(val zoom: Int, val x: Int, val y: Int) {
     }
 
     fun minX(relation: TileCoordinate): Int {
-        val minX = min(this.x, this.x)
+        val minX = min(this.x, relation.x)
         return if (minX > 0) minX else 0
     }
 
