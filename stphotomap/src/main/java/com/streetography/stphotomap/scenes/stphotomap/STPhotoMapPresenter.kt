@@ -29,28 +29,28 @@ class STPhotoMapPresenter: STPhotoMapPresentationLogic {
     }
 
     private fun titleStringIdForEntityLevel(entityLevel: EntityLevel): Int {
-        when (entityLevel) {
-            EntityLevel.location -> return R.string.st_photo_map_location_level_title
-            EntityLevel.block -> return R.string.st_photo_map_block_level_title
-            EntityLevel.neighborhood -> return R.string.st_photo_map_neighborhood_level_title
-            EntityLevel.city -> return R.string.st_photo_map_city_level_title
-            EntityLevel.county -> return R.string.st_photo_map_county_level_title
-            EntityLevel.state -> return R.string.st_photo_map_state_level_title
-            EntityLevel.country -> return R.string.st_photo_map_country_level_title
-            else -> return 0
+        return when (entityLevel) {
+            EntityLevel.location -> R.string.st_photo_map_location_level_title
+            EntityLevel.block -> R.string.st_photo_map_block_level_title
+            EntityLevel.neighborhood -> R.string.st_photo_map_neighborhood_level_title
+            EntityLevel.city -> R.string.st_photo_map_city_level_title
+            EntityLevel.county -> R.string.st_photo_map_county_level_title
+            EntityLevel.state -> R.string.st_photo_map_state_level_title
+            EntityLevel.country -> R.string.st_photo_map_country_level_title
+            else -> 0
         }
     }
 
     private fun imageResourceIdForEntityLevel(entityLevel: EntityLevel): Int {
-        when (entityLevel) {
-            EntityLevel.location -> return R.drawable.st_entity_level_location
-            EntityLevel.block -> return R.drawable.st_entity_level_block
-            EntityLevel.neighborhood -> return R.drawable.st_entity_level_neighborhood
-            EntityLevel.city -> return R.drawable.st_entity_level_city
-            EntityLevel.county -> return R.drawable.st_entity_level_county
-            EntityLevel.state -> return R.drawable.st_entity_level_state
-            EntityLevel.country -> return R.drawable.st_entity_level_country
-            else -> return 0
+        return when (entityLevel) {
+            EntityLevel.location -> R.drawable.st_entity_level_location
+            EntityLevel.block -> R.drawable.st_entity_level_block
+            EntityLevel.neighborhood -> R.drawable.st_entity_level_neighborhood
+            EntityLevel.city -> R.drawable.st_entity_level_city
+            EntityLevel.county -> R.drawable.st_entity_level_county
+            EntityLevel.state -> R.drawable.st_entity_level_state
+            EntityLevel.country -> R.drawable.st_entity_level_country
+            else -> 0
         }
     }
 }

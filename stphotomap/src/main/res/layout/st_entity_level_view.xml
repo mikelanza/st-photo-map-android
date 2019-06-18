@@ -4,8 +4,7 @@
        android:orientation="vertical"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       tools:parentTag="RelativeLayout"
-       android:background="@android:color/transparent">
+       tools:parentTag="RelativeLayout">
 
     <LinearLayout
             android:id="@+id/containerLayout"
@@ -25,6 +24,7 @@
                 android:id="@+id/titleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:drawablePadding="8dp"
                 style="@style/STEntityLevelViewTitleTextView"/>
 

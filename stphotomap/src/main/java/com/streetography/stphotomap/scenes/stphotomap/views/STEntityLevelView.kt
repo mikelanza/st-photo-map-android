@@ -1,6 +1,5 @@
 package com.streetography.stphotomap.scenes.stphotomap.views
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
@@ -12,6 +11,9 @@ import com.streetography.stphotomap.R
 
 open public class STEntityLevelView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr) {
+    private val showDuration: Long = 2000
+    private val fadeDuration: Long = 200
+
     private var containerLayout: LinearLayout? = null
     private var titleTextView: TextView? = null
 
@@ -21,7 +23,7 @@ open public class STEntityLevelView @JvmOverloads constructor(
     }
 
     open fun setTitle(titleId: Int) {
-        this.titleTextView?.text = resources.getString(titleId)
+        this.titleTextView?.text = this.resources.getString(titleId)
     }
 
     open fun show() {
@@ -53,21 +55,4 @@ open public class STEntityLevelView @JvmOverloads constructor(
         animate().setDuration(fadeDuration).alpha(0f)
         postDelayed({ this.visibility = View.GONE }, fadeDuration)
     }
-
-    private val showDuration: Long
-        get() {
-            val attributes = this.context.obtainStyledAttributes(R.style.STEntityLevelView, R.styleable.STEntityLevelView)
-            val duration = attributes.getFloat(0, 0F)
-            attributes.recycle()
-            return duration.toLong()
-        }
-
-    private val fadeDuration: Long
-        @SuppressLint("ResourceType")
-        get() {
-            val attributes = this.context.obtainStyledAttributes(R.style.STEntityLevelView, R.styleable.STEntityLevelView)
-            val duration = attributes.getFloat(1, 0F)
-            attributes.recycle()
-            return duration.toLong()
-        }
 }

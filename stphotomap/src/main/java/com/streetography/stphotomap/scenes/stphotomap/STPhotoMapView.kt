@@ -107,6 +107,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
         layoutParams.addRule(CENTER_IN_PARENT)
         this.entityLevelView?.layoutParams = layoutParams
         this.entityLevelView?.visibility = View.GONE
+        this.entityLevelView?.setBackgroundColor(Color.TRANSPARENT)
         this.addView(this.entityLevelView)
     }
     //endregion
