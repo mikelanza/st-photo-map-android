@@ -2,7 +2,6 @@ package com.streetography.stphotomap.scenes.stphotomap.views
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
@@ -16,12 +15,13 @@ open public class STEntityLevelView @JvmOverloads constructor(
     private var titleTextView: TextView? = null
 
     open fun setImage(resourceId: Int) {
-        val drawable = ContextCompat.getDrawable(this.context, resourceId)
-        this.titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
+//        val drawable = ContextCompat.getDrawable(this.context, resourceId)
+//        this.titleTextView?.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
     }
 
     open fun setTitle(titleId: Int) {
-        this.titleTextView?.text = resources.getString(titleId)
+//        this.titleTextView?.text = this.resources.getString(titleId)
+        this.titleTextView?.text = "Entity Level"
     }
 
     open fun show() {
