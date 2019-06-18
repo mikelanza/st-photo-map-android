@@ -1,12 +1,14 @@
 package com.streetography.stphotomap.scenes.stphotomap.cache
 
+import java.util.concurrent.CopyOnWriteArrayList
+
 class STPhotoMapGeojsonCacheHandler() {
     var cache: STPhotoMapGeojsonCache
-    var activeDownloads: ArrayList<String>
+    var activeDownloads: CopyOnWriteArrayList<String>
 
     init {
         this.cache = STPhotoMapGeojsonCache()
-        this.activeDownloads = ArrayList()
+        this.activeDownloads = CopyOnWriteArrayList()
     }
 
     fun hasActiveDownload(url: String): Boolean {

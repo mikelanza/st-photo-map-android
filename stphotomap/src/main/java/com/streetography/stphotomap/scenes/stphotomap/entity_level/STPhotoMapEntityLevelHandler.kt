@@ -1,6 +1,7 @@
 package com.streetography.stphotomap.scenes.stphotomap.entity_level
 
 import com.streetography.stphotomap.models.entity_level.EntityLevel
+import java.util.concurrent.CopyOnWriteArrayList
 
 interface STPhotoMapEntityLevelHandlerDelegate {
     fun photoMapEntityLevelHandler(newEntityLevel: EntityLevel)
@@ -9,11 +10,11 @@ interface STPhotoMapEntityLevelHandlerDelegate {
 
 class STPhotoMapEntityLevelHandler(val delegate: STPhotoMapEntityLevelHandlerDelegate?) {
     var entityLevel: EntityLevel
-    var activeDownloads: ArrayList<String>
+    var activeDownloads: CopyOnWriteArrayList<String>
 
     init {
         this.entityLevel = EntityLevel.unknown
-        this.activeDownloads = ArrayList()
+        this.activeDownloads = CopyOnWriteArrayList()
     }
 
     fun hasActiveDownload(url: String): Boolean {

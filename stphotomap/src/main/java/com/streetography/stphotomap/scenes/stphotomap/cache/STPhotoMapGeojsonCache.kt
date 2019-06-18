@@ -1,15 +1,16 @@
 package com.streetography.stphotomap.scenes.stphotomap.cache
 
 import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
+import java.util.concurrent.CopyOnWriteArrayList
 
 class STPhotoMapGeojsonCache() {
     class Tile(val keyUrl: String, var geojsonObject: GeoJSONObject) {
     }
 
-    var tiles: ArrayList<Tile>
+    var tiles: CopyOnWriteArrayList<Tile>
 
     init {
-        this.tiles = ArrayList()
+        this.tiles = CopyOnWriteArrayList()
     }
 
     fun addTile(tile: Tile) {
