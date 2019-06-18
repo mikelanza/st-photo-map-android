@@ -24,8 +24,8 @@
                 android:id="@+id/titleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:drawablePadding="8dp"
-                android:drawableTop="@drawable/st_entity_level_block"
                 style="@style/STEntityLevelViewTitleTextView"/>
 
     </LinearLayout>
