@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.TileProvider
 import com.google.android.gms.maps.model.UrlTileProvider
 import com.streetography.stphotomap.R
 import com.streetography.stphotomap.extensions.google_map.visibleTiles
+import com.streetography.stphotomap.extensions.visible_region.boundingBox
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
@@ -38,7 +39,7 @@ interface STPhotoMapDisplayLogic {
 
 public open class STPhotoMapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr),
-    STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener {
+    STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener {
     var interactor: STPhotoMapBusinessLogic? = null
 
     var entityLevelView: STEntityLevelView? = null
@@ -84,6 +85,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     private fun setupMapViewListeners() {
         this.mapView?.setOnCameraIdleListener(this)
+        this.mapView?.setOnCameraMoveListener(this)
     }
 
     private fun setupProgressBar() {
@@ -131,6 +133,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.shouldUpdateVisibleTiles()
         this.shouldCacheGeojsonObjects()
         this.shouldDetermineEntityLevel()
+    }
+
+    override fun onCameraMove() {
+        this.interactor?.shouldUpdateBoundingBox(STPhotoMapModels.UpdateBoundingBox.Request(this.mapView?.projection?.visibleRegion?.boundingBox()))
     }
     //endregion
 

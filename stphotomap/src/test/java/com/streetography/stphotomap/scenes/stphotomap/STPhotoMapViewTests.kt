@@ -56,6 +56,12 @@ class STPhotoMapViewTests: TestCase() {
         this.sut.onCameraIdle()
         assertTrue(this.interactorSpy.shouldCacheGeojsonObjectsCalled)
     }
+
+    @Test
+    fun testShouldUpdateBoundingBoxParameterWhenOnCameraMove() {
+        this.sut.onCameraMove()
+        assertTrue(this.interactorSpy.shouldUpdateBoundingBoxCalled)
+    }
     //endregion
 
     //region Display logic tests

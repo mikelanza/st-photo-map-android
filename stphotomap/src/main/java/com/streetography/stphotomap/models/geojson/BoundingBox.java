@@ -39,12 +39,10 @@ public class BoundingBox implements GeoJSONBoundingBox {
     }
 
     public String getDescription() {
-        return "BoundingBox: (" +
-                "\n\tminLongitude: " + String.valueOf(minLongitude) +
-                ",\n\tminLatitude: " + String.valueOf(minLatitude) +
-                ",\n\tmaxLongitude: " + String.valueOf(maxLongitude) +
-                ",\n\tmaxLatitude: " + String.valueOf(maxLatitude) +
-                ",\n\tcentroid: " + String.valueOf(centroid) + "\n)";
+        return String.valueOf(minLongitude) +
+                "," + String.valueOf(minLatitude) +
+                "," + String.valueOf(maxLongitude) +
+                "," + String.valueOf(maxLatitude);
     }
 
     @Override

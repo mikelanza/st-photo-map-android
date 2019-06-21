@@ -2,6 +2,8 @@ package com.streetography.stphotomap.scenes.stphotomap.interactor
 
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
+import com.streetography.stphotomap.models.parameters.KeyValue
+import com.streetography.stphotomap.models.parameters.Parameters
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.operations.base.errors.OperationError
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapModels
@@ -13,9 +15,11 @@ import com.streetography.stphotomap.scenes.stphotomap.cache.STPhotoMapGeojsonCac
 import com.streetography.stphotomap.scenes.stphotomap.cache.STPhotoMapGeojsonCacheHandler
 import com.streetography.stphotomap.scenes.stphotomap.entity_level.STPhotoMapEntityLevelHandler
 import com.streetography.stphotomap.scenes.stphotomap.entity_level.STPhotoMapEntityLevelHandlerDelegate
+import com.streetography.stphotomap.scenes.stphotomap.parameters.STPhotoMapParametersHandler
 
 interface STPhotoMapBusinessLogic {
     fun shouldUpdateVisibleTiles(request: STPhotoMapModels.VisibleTiles.Request)
+    fun shouldUpdateBoundingBox(request: STPhotoMapModels.UpdateBoundingBox.Request)
     fun shouldDetermineEntityLevel()
     fun shouldCacheGeojsonObjects()
 }
@@ -39,6 +43,12 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
 
     override fun shouldUpdateVisibleTiles(request: STPhotoMapModels.VisibleTiles.Request) {
         this.visibleTiles = request.tiles
+    }
+
+    override fun shouldUpdateBoundingBox(request: STPhotoMapModels.UpdateBoundingBox.Request) {
+        request.boundingBox?.description?.let {
+            STPhotoMapParametersHandler.instance.update(KeyValue(Parameters.Keys.bbox, it))
+        }
     }
 
     override fun shouldDetermineEntityLevel() {
