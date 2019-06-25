@@ -5,7 +5,6 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 28
 
-
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
@@ -20,21 +19,38 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField('String', 'GEOJSON_TILE_URL', '"https://tiles.streetography.com/tile/%d/%d/%d.geojson"')
+            buildConfigField('String', 'JPEG_TILE_URL', '"https://tiles.streetography.com/tile/%d/%d/%d.jpeg"')
+        }
+
+        debug {
+            buildConfigField('String', 'GEOJSON_TILE_URL', '"https://tiles.streetography.com/tile/%d/%d/%d.geojson"')
+            buildConfigField('String', 'JPEG_TILE_URL', '"https://tiles.streetography.com/tile/%d/%d/%d.jpeg"')
         }
     }
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:1.10.19'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    testImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation 'androidx.test:core:1.2.0'
+
+    testImplementation 'org.robolectric:robolectric:4.3'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.14.2'
 }
 repositories {
     mavenCentral()

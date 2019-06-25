@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">STPhotoMap</string>
+
+    <string name="st_photo_map_no_data_available_title">Nu există informații pentru acest nivel.</string>
+    <string name="st_photo_map_no_internet_connection_title">Nu ai conexiune la internet.</string>
+
+    <string name="st_photo_map_data_sources_title">Data Sources</string>
+
+    <string name="st_photo_map_location_level_title">Locație</string>
+    <string name="st_photo_map_block_level_title">Bloc</string>
+    <string name="st_photo_map_neighborhood_level_title">Cartier</string>
+    <string name="st_photo_map_city_level_title">Oraș</string>
+    <string name="st_photo_map_county_level_title">Județ</string>
+    <string name="st_photo_map_state_level_title">Regiune</string>
+    <string name="st_photo_map_country_level_title">Țară</string>
+</resources>
