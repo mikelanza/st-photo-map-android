@@ -368,4 +368,27 @@ class STPhotoMapInteractorTests: TestCase() {
     }
     //endregion
 
+    //region Location level
+
+    @Test
+    fun testShouldDetermineLocationLevelWhenCacheIsNotEmptyAndEntityLevelIsLocation() {
+        val tileCoordinate = STPhotoMapSeeds().tileCoordinate
+        val keyUrl = STPhotoMapUriBuilder().geojsonTileUri(tileCoordinate).first
+        val geojsonObject = STPhotoMapSeeds().locationGeojsonObject()
+
+        this.workerSpy.geojsonObject = geojsonObject
+
+        this.sut.cacheHandler.removeAllActiveDownloads()
+        this.sut.cacheHandler.cache.addTile(STPhotoMapGeojsonCache.Tile(keyUrl, geojsonObject))
+        this.sut.visibleTiles = arrayListOf(tileCoordinate)
+
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.location
+
+        this.sut.shouldDetermineLocationLevel()
+
+        assertTrue(this.presenterSpy.presentLocationMarkersCalled)
+    }
+
+    //endregion
+
 }

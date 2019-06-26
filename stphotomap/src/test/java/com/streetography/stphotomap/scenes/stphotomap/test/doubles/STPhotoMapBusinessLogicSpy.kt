@@ -8,6 +8,7 @@ class STPhotoMapBusinessLogicSpy: STPhotoMapBusinessLogic {
     var shouldDetermineEntityLevelCalled: Boolean = false
     var shouldCacheGeojsonObjectsCalled: Boolean = false
     var shouldUpdateBoundingBoxCalled: Boolean = false
+    var shouldDetermineLocationLevelCalled: Boolean = false
 
     override fun shouldUpdateVisibleTiles(request: STPhotoMapModels.VisibleTiles.Request) {
         this.shouldUpdateVisibleTilesCalled = true
@@ -23,5 +24,9 @@ class STPhotoMapBusinessLogicSpy: STPhotoMapBusinessLogic {
 
     override fun shouldUpdateBoundingBox(request: STPhotoMapModels.UpdateBoundingBox.Request) {
         this.shouldUpdateBoundingBoxCalled = true
+    }
+
+    override fun shouldDetermineLocationLevel() {
+        this.shouldDetermineLocationLevelCalled = true
     }
 }

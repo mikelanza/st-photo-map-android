@@ -9,6 +9,7 @@ interface STPhotoMapPresentationLogic {
     fun presentNotLoadingState()
 
     fun presentEntityLevel(response: STPhotoMapModels.EntityZoomLevel.Response)
+    fun presentLocationMarkers(response: STPhotoMapModels.LocationMarkers.Response)
 }
 
 class STPhotoMapPresenter: STPhotoMapPresentationLogic {
@@ -52,5 +53,12 @@ class STPhotoMapPresenter: STPhotoMapPresentationLogic {
             EntityLevel.country -> R.drawable.st_entity_level_country
             else -> 0
         }
+    }
+
+    override fun presentLocationMarkers(response: STPhotoMapModels.LocationMarkers.Response) {
+        val markers = response.markers.map {
+            it.toPhotoMarker()
+        }
+        this.displayer?.get()?.displayLocationMarkers(STPhotoMapModels.LocationMarkers.ViewModel(ArrayList(markers)))
     }
 }

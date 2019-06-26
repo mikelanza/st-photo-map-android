@@ -1,8 +1,10 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
+import com.google.android.gms.maps.model.LatLng
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.geojson.BoundingBox
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
+import com.streetography.stphotomap.scenes.stphotomap.markers.PhotoMarker
 
 class STPhotoMapModels {
     class VisibleTiles {
@@ -20,6 +22,24 @@ class STPhotoMapModels {
         }
 
         class ViewModel(val titleId: Int, val imageResourceId: Int) {
+        }
+    }
+
+    class Marker(val id: String,
+                 val imageUrl: String?,
+                 val latitude: Double,
+                 val longitude: Double) {
+
+        fun toPhotoMarker(): PhotoMarker {
+            return PhotoMarker(id, LatLng(latitude, longitude), imageUrl, null)
+        }
+    }
+
+    class LocationMarkers {
+        class Response(val markers: ArrayList<Marker>) {
+        }
+
+        class ViewModel(val markers: ArrayList<PhotoMarker>) {
         }
     }
 }

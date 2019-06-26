@@ -8,6 +8,7 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
     var presentNotLoadingStateCalled: Boolean = false
 
     var presentEntityLevelCalled: Boolean = false
+    var presentLocationMarkersCalled: Boolean = false
 
     override fun presentLoadingState() {
         this.presentLoadingStateCalled = true
@@ -19,5 +20,9 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
 
     override fun presentEntityLevel(response: STPhotoMapModels.EntityZoomLevel.Response) {
         this.presentEntityLevelCalled = true
+    }
+
+    override fun presentLocationMarkers(response: STPhotoMapModels.LocationMarkers.Response) {
+        this.presentLocationMarkersCalled = true
     }
 }

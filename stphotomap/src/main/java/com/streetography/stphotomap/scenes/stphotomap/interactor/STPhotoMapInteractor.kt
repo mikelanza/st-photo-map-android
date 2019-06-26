@@ -22,6 +22,7 @@ interface STPhotoMapBusinessLogic {
     fun shouldUpdateBoundingBox(request: STPhotoMapModels.UpdateBoundingBox.Request)
     fun shouldDetermineEntityLevel()
     fun shouldCacheGeojsonObjects()
+    fun shouldDetermineLocationLevel()
 }
 
 class STPhotoMapInteractor : STPhotoMapBusinessLogic,
@@ -127,6 +128,14 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
         error: OperationError
     ) {
         this.cacheHandler.removeActiveDownload(keyUrl)
+    }
+    //endregion
+
+    override fun shouldDetermineLocationLevel() {
+        if (this.isLocationLevel() == false) { return }
+
+        val cachedTiles = this.getVisibleCachedTiles()
+        this.presentPhotoAnnotationsForCached(cachedTiles)
     }
     //endregion
 }

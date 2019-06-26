@@ -10,14 +10,8 @@ import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMapOptions
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.TileOverlayOptions
-import com.google.android.gms.maps.model.TileProvider
-import com.google.android.gms.maps.model.UrlTileProvider
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.*
 import com.streetography.stphotomap.R
 import com.streetography.stphotomap.extensions.google_map.visibleTiles
 import com.streetography.stphotomap.extensions.visible_region.boundingBox
@@ -25,6 +19,7 @@ import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
+import com.streetography.stphotomap.scenes.stphotomap.location_level.STPhotoMapMarkerHandler
 import com.streetography.stphotomap.scenes.stphotomap.views.STEntityLevelView
 import java.lang.ref.WeakReference
 import java.net.MalformedURLException
@@ -35,6 +30,7 @@ interface STPhotoMapDisplayLogic {
     fun displayNotLoadingState()
 
     fun displayEntityLevel(viewModel: STPhotoMapModels.EntityZoomLevel.ViewModel)
+    fun displayLocationMarkers(viewModel: STPhotoMapModels.LocationMarkers.ViewModel)
 }
 
 public open class STPhotoMapView @JvmOverloads constructor(
@@ -45,6 +41,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
     var entityLevelView: STEntityLevelView? = null
     var mapView: GoogleMap? = null
     var progressBar: ProgressBar? = null
+    var markerHandler: STPhotoMapMarkerHandler? = null
 
     init {
         this.setup()
@@ -59,6 +56,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
         interactor.presenter = presenter
 
         this.interactor = interactor
+    }
+
+    private fun setupMarkerHandler() {
+        markerHandler = STPhotoMapMarkerHandler(getContext(), mapView)
     }
 
     //region Subviews configuration
@@ -127,12 +128,14 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
         this.setupGoogleMapStyle()
         this.setupMapViewListeners()
+        this.setupMarkerHandler()
     }
 
     override fun onCameraIdle() {
         this.shouldUpdateVisibleTiles()
         this.shouldCacheGeojsonObjects()
         this.shouldDetermineEntityLevel()
+        this.shouldDetermineLocationLevel()
     }
 
     override fun onCameraMove() {
@@ -160,6 +163,16 @@ public open class STPhotoMapView @JvmOverloads constructor(
     }
     //endregion
 
+    //region Map logic
+    fun moveMapCameraTo(latLng: LatLng) {
+       this.post({
+           mapView?.moveCamera(
+               CameraUpdateFactory.newLatLng(latLng)
+           )
+       })
+    }
+    //endregion
+
     //region Business logic
     private fun shouldUpdateVisibleTiles() {
         val visibleTiles: ArrayList<TileCoordinate> = this.mapView?.visibleTiles() ?: ArrayList()
@@ -172,6 +185,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     private fun shouldCacheGeojsonObjects() {
         this.interactor?.shouldCacheGeojsonObjects()
+    }
+
+    private fun shouldDetermineLocationLevel() {
+        this.interactor?.shouldDetermineLocationLevel()
     }
     //endregion
 
@@ -205,6 +222,12 @@ public open class STPhotoMapView @JvmOverloads constructor(
             this.entityLevelView?.setTitle(viewModel.titleId)
             this.entityLevelView?.setImage(viewModel.imageResourceId)
             this.entityLevelView?.show()
+        }
+    }
+
+    override fun displayLocationMarkers(viewModel: STPhotoMapModels.LocationMarkers.ViewModel) {
+        this.post {
+            this.markerHandler?.addMarkers(viewModel.markers)
         }
     }
     //endregion

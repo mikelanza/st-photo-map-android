@@ -3,6 +3,7 @@ package com.streetography.stphotomap.scenes.stphotomap
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.streetography.stphotomap.R
+import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STEntityLevelViewSpy
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapBusinessLogicSpy
 import junit.framework.TestCase
@@ -62,6 +63,12 @@ class STPhotoMapViewTests: TestCase() {
         this.sut.onCameraMove()
         assertTrue(this.interactorSpy.shouldUpdateBoundingBoxCalled)
     }
+
+    @Test
+    fun testShouldDetermineLocationLevelWhenCameraIdle() {
+        this.sut.onCameraIdle()
+        assertTrue("The interactor should determine location level when camera is on idle.", this.interactorSpy.shouldDetermineLocationLevelCalled)
+    }
     //endregion
 
     //region Display logic tests
@@ -99,6 +106,20 @@ class STPhotoMapViewTests: TestCase() {
         assertTrue(this.entityLevelViewSpy.setTitleCalled)
         assertTrue(this.entityLevelViewSpy.setImageCalled)
         assertTrue(this.entityLevelViewSpy.showCalled)
+    }
+    //endregion
+
+    //region Location level
+    @Test
+    fun testDisplayLocationMarkers() {
+        val photoMarkers = STPhotoMapSeeds().photoMarkers()
+        this.sut.moveMapCameraTo(photoMarkers.get(0).position)
+
+        val viewModel = STPhotoMapModels.LocationMarkers.ViewModel(photoMarkers)
+        this.sut.displayLocationMarkers(viewModel)
+
+        //assertEquals(this.sut.markerHandler?.markers?.size, photoMarkers.size)
+        //assertEquals(this.sut.markerHandler?.clusterManager?.markerCollection?.markers?.size, photoMarkers.size)
     }
     //endregion
 }

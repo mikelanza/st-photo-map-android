@@ -1,6 +1,7 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
 import com.streetography.stphotomap.models.entity_level.EntityLevel
+import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapDisplayLogicSpy
 import junit.framework.TestCase
 import org.junit.After
@@ -50,5 +51,13 @@ class STPhotoMapPresenterTests: TestCase() {
         val response = STPhotoMapModels.EntityZoomLevel.Response(EntityLevel.block)
         this.sut.presentEntityLevel(response)
         assertTrue(this.displayerSpy.displayEntityLevelCalled)
+    }
+
+    @Test
+    fun testPresentLocationAnnotations() {
+        val response = STPhotoMapModels.LocationMarkers.Response(STPhotoMapSeeds().markers())
+        this.sut.presentLocationMarkers(response)
+
+        assertTrue(this.displayerSpy.displayLocationMarkersCalled)
     }
 }
