@@ -12,6 +12,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
 class STPhotoMapViewTests: TestCase() {
@@ -113,13 +114,18 @@ class STPhotoMapViewTests: TestCase() {
     @Test
     fun testDisplayLocationMarkers() {
         val photoMarkers = STPhotoMapSeeds().photoMarkers()
-        this.sut.moveMapCameraTo(photoMarkers.get(0).position)
 
-        val viewModel = STPhotoMapModels.LocationMarkers.ViewModel(photoMarkers)
-        this.sut.displayLocationMarkers(viewModel)
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                sut.moveMapCameraTo(photoMarkers.get(0).position)
 
-        //assertEquals(this.sut.markerHandler?.markers?.size, photoMarkers.size)
-        //assertEquals(this.sut.markerHandler?.clusterManager?.markerCollection?.markers?.size, photoMarkers.size)
+                val viewModel = STPhotoMapModels.LocationMarkers.ViewModel(photoMarkers)
+                sut.displayLocationMarkers(viewModel)
+
+                assertEquals(sut.markerHandler?.markers?.size, photoMarkers.size)
+                assertEquals(sut.markerHandler?.clusterManager?.markerCollection?.markers?.size, photoMarkers.size)
+            }
+        }, 2500)
     }
     //endregion
 }
