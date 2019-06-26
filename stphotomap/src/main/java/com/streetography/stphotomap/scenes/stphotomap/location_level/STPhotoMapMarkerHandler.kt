@@ -37,9 +37,10 @@ class STPhotoMapMarkerHandler(context: Context, map: GoogleMap?): ClusterManager
         markers.forEach {
             this.addMarker(it)
         }
+        clusterManager.cluster()
     }
 
-    fun addMarker(marker: PhotoMarker) {
+    private fun addMarker(marker: PhotoMarker) {
         if (this.alreadyExists(marker) == false) {
             markers.add(marker)
             clusterManager.addItem(marker)
