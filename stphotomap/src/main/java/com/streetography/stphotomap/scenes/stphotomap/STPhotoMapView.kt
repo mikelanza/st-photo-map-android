@@ -25,6 +25,10 @@ import java.lang.ref.WeakReference
 import java.net.MalformedURLException
 import java.net.URL
 
+interface STPhotoMapViewDelegate {
+    fun onMapReady(map: GoogleMap)
+}
+
 interface STPhotoMapDisplayLogic {
     fun displayLoadingState()
     fun displayNotLoadingState()
@@ -42,6 +46,8 @@ public open class STPhotoMapView @JvmOverloads constructor(
     var mapView: GoogleMap? = null
     var progressBar: ProgressBar? = null
     var markerHandler: STPhotoMapMarkerHandler? = null
+
+    public var delegate: STPhotoMapViewDelegate? = null
 
     init {
         this.setup()
@@ -129,6 +135,8 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.setupGoogleMapStyle()
         this.setupMapViewListeners()
         this.setupMarkerHandler()
+
+        this.delegate?.onMapReady(googleMap)
     }
 
     override fun onCameraIdle() {

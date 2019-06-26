@@ -61,6 +61,7 @@ class STPhotoClusterRenderer(context: Context, map: GoogleMap?, clusterManager: 
     override fun onClusterRendered(cluster: Cluster<PhotoMarker>?, marker: Marker?) {
         cluster?.let {
             clusterView.setupBadgeNumber(it.size)
+            marker?.setIcon(BitmapDescriptorFactory.fromBitmap(this.convertLayout(clusterView)))
         }
     }
 
