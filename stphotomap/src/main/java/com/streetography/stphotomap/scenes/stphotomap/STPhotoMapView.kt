@@ -35,6 +35,7 @@ interface STPhotoMapDisplayLogic {
 
     fun displayEntityLevel(viewModel: STPhotoMapModels.EntityZoomLevel.ViewModel)
     fun displayLocationMarkers(viewModel: STPhotoMapModels.LocationMarkers.ViewModel)
+    fun displayRemoveLocationMarkers()
 }
 
 public open class STPhotoMapView @JvmOverloads constructor(
@@ -236,6 +237,12 @@ public open class STPhotoMapView @JvmOverloads constructor(
     override fun displayLocationMarkers(viewModel: STPhotoMapModels.LocationMarkers.ViewModel) {
         this.post {
             this.markerHandler?.addMarkers(viewModel.markers)
+        }
+    }
+
+    override fun displayRemoveLocationMarkers() {
+        this.post {
+            this.markerHandler?.removeAllMarkers()
         }
     }
     //endregion

@@ -40,6 +40,11 @@ class STPhotoMapMarkerHandler(context: Context, map: GoogleMap?): ClusterManager
         clusterManager.cluster()
     }
 
+    fun removeAllMarkers() {
+        this.markers.clear()
+        this.clusterManager.clearItems()
+    }
+
     private fun addMarker(marker: PhotoMarker) {
         if (this.alreadyExists(marker) == false) {
             markers.add(marker)

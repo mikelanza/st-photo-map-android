@@ -9,6 +9,7 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
 
     var presentEntityLevelCalled: Boolean = false
     var presentLocationMarkersCalled: Boolean = false
+    var presentRemoveLocationMarkers: Boolean = false
 
     override fun presentLoadingState() {
         this.presentLoadingStateCalled = true
@@ -24,5 +25,9 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
 
     override fun presentLocationMarkers(response: STPhotoMapModels.LocationMarkers.Response) {
         this.presentLocationMarkersCalled = true
+    }
+
+    override fun presentRemoveLocationMarkers() {
+        this.presentRemoveLocationMarkers = true
     }
 }

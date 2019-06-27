@@ -8,6 +8,7 @@ class STPhotoMapDisplayLogicSpy: STPhotoMapDisplayLogic {
     var displayNotLoadingStateCalled: Boolean = false
     var displayEntityLevelCalled: Boolean = false
     var displayLocationMarkersCalled: Boolean = false
+    var displayRemoveLocationMarkersCalled: Boolean = false
 
     override fun displayLoadingState() {
         this.displayLoadingStateCalled = true
@@ -23,5 +24,9 @@ class STPhotoMapDisplayLogicSpy: STPhotoMapDisplayLogic {
 
     override fun displayLocationMarkers(viewModel: STPhotoMapModels.LocationMarkers.ViewModel) {
         this.displayLocationMarkersCalled = true
+    }
+
+    override fun displayRemoveLocationMarkers() {
+        this.displayRemoveLocationMarkersCalled = true
     }
 }

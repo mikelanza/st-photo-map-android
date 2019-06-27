@@ -125,7 +125,19 @@ class STPhotoMapViewTests: TestCase() {
                 assertEquals(sut.markerHandler?.markers?.size, photoMarkers.size)
                 assertEquals(sut.markerHandler?.clusterManager?.markerCollection?.markers?.size, photoMarkers.size)
             }
-        }, 2500)
+        }, 5000)
+    }
+
+    @Test
+    fun testDisplayRemoveLocationMarkers() {
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                sut.displayRemoveLocationMarkers()
+
+                assertEquals(sut.markerHandler?.markers?.size, 0)
+                assertEquals(sut.markerHandler?.clusterManager?.markerCollection?.markers?.size, 0)
+            }
+        }, 5000)
     }
     //endregion
 }

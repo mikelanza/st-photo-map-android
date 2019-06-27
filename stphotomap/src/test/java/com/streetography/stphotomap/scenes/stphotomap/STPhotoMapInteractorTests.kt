@@ -208,12 +208,13 @@ class STPhotoMapInteractorTests: TestCase() {
         assertTrue(this.workerSpy.cancelAllGeojsonEntityLevelOperationsCalled)
         assertTrue(this.workerSpy.getGeojsonTileForEntityLevelCalled)
 
-
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
 
         assertTrue(this.presenterSpy.presentLoadingStateCalled)
         assertTrue(this.presenterSpy.presentNotLoadingStateCalled)
         assertTrue(this.presenterSpy.presentEntityLevelCalled)
+        assertTrue(this.presenterSpy.presentRemoveLocationMarkers)
+        assertTrue(this.workerSpy.cancelAllGeojsonLocationLevelOperationsCalled)
     }
 
     @Test
@@ -270,6 +271,8 @@ class STPhotoMapInteractorTests: TestCase() {
         assertFalse(this.workerSpy.getGeojsonTileForCachingCalled)
         assertTrue(this.presenterSpy.presentNotLoadingStateCalled)
         assertTrue(this.presenterSpy.presentEntityLevelCalled)
+        assertTrue(this.presenterSpy.presentRemoveLocationMarkers)
+        assertTrue(this.workerSpy.cancelAllGeojsonLocationLevelOperationsCalled)
     }
 
     @Test
@@ -310,6 +313,8 @@ class STPhotoMapInteractorTests: TestCase() {
         assertTrue(this.workerSpy.getGeojsonTileForEntityLevelCalled)
         assertTrue(this.presenterSpy.presentNotLoadingStateCalled)
         assertTrue(this.presenterSpy.presentEntityLevelCalled)
+        assertTrue(this.presenterSpy.presentRemoveLocationMarkers)
+        assertTrue(this.workerSpy.cancelAllGeojsonLocationLevelOperationsCalled)
     }
 
     @Test
@@ -333,6 +338,10 @@ class STPhotoMapInteractorTests: TestCase() {
         assertTrue(this.workerSpy.getGeojsonTileForEntityLevelCalled)
         assertTrue(this.presenterSpy.presentNotLoadingStateCalled)
         assertTrue(this.presenterSpy.presentEntityLevelCalled)
+        assertFalse(this.presenterSpy.presentRemoveLocationMarkers)
+        assertFalse(this.workerSpy.cancelAllGeojsonLocationLevelOperationsCalled)
+        assertTrue(this.workerSpy.getGeojsonLocationLevelCalled)
+        assertTrue(this.presenterSpy.presentLocationMarkersCalled)
     }
 
     @Test
@@ -365,6 +374,8 @@ class STPhotoMapInteractorTests: TestCase() {
         assertTrue(this.workerSpy.cancelAllGeojsonEntityLevelOperationsCalled)
         assertTrue(this.workerSpy.getGeojsonTileForEntityLevelCalled)
         assertTrue(this.presenterSpy.presentEntityLevelCalled)
+        assertTrue(this.presenterSpy.presentRemoveLocationMarkers)
+        assertTrue(this.workerSpy.cancelAllGeojsonLocationLevelOperationsCalled)
     }
     //endregion
 
@@ -387,6 +398,83 @@ class STPhotoMapInteractorTests: TestCase() {
         this.sut.shouldDetermineLocationLevel()
 
         assertTrue(this.presenterSpy.presentLocationMarkersCalled)
+    }
+
+    @Test
+    fun testShouldDetermineLocationLevelWhenCacheIsNotEmptyAndEntityLevelIsNotLocation() {
+        val tileCoordinate = STPhotoMapSeeds().tileCoordinate
+        val keyUrl = STPhotoMapUriBuilder().geojsonTileUri(tileCoordinate).first
+        val geojsonObject = STPhotoMapSeeds().locationGeojsonObject()
+
+        this.workerSpy.geojsonObject = geojsonObject
+
+        this.sut.cacheHandler.removeAllActiveDownloads()
+        this.sut.cacheHandler.cache.addTile(STPhotoMapGeojsonCache.Tile(keyUrl, geojsonObject))
+        this.sut.visibleTiles = arrayListOf(tileCoordinate)
+
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.city
+
+        this.sut.shouldDetermineLocationLevel()
+
+        assertFalse(this.presenterSpy.presentLocationMarkersCalled)
+    }
+
+    @Test
+    fun testShouldDetermineLocationLevelWhenCacheIsEmptyAndEntityLevelIsLocationAndThereAreActiveDownloads() {
+        val tileCoordinate = STPhotoMapSeeds().tileCoordinate
+        val keyUrl = STPhotoMapUriBuilder().geojsonTileUri(tileCoordinate).first
+
+        this.sut.cacheHandler.removeAllActiveDownloads()
+        this.sut.visibleTiles = arrayListOf(tileCoordinate)
+
+        this.sut.locationLevelHandler.addActiveDownload(keyUrl)
+
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.location
+
+        this.sut.shouldDetermineLocationLevel()
+
+        assertFalse(this.workerSpy.getGeojsonLocationLevelCalled)
+        assertFalse(this.presenterSpy.presentLocationMarkersCalled)
+    }
+
+    @Test
+    fun testShouldDetermineLocationLevelWhenCacheIsEmptyAndEntityLevelIsLocationAfterTileIsDownloadedForSuccessCase() {
+        val tileCoordinate = STPhotoMapSeeds().tileCoordinate
+
+        this.workerSpy.geojsonObject = STPhotoMapSeeds().locationGeojsonObject()
+
+        this.sut.cacheHandler.removeAllActiveDownloads()
+        this.sut.locationLevelHandler.removeAllActiveDownloads()
+        this.sut.visibleTiles = arrayListOf(tileCoordinate)
+
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.location
+
+
+        this.sut.shouldDetermineLocationLevel()
+
+        assertTrue(this.workerSpy.getGeojsonLocationLevelCalled)
+        assertTrue(this.presenterSpy.presentLocationMarkersCalled)
+    }
+
+    @Test
+    fun testShouldDetermineLocationLevelWhenCacheIsEmptyAndEntityLevelIsNotLocationAfterTileDownload() {
+        this.workerSpy.delay = this.workerDelay
+        this.workerSpy.geojsonObject = STPhotoMapSeeds().locationGeojsonObject()
+
+        val tileCoordinate = STPhotoMapSeeds().tileCoordinate
+
+        this.sut.cacheHandler.removeAllActiveDownloads()
+        this.sut.locationLevelHandler.removeAllActiveDownloads()
+        this.sut.visibleTiles = arrayListOf(tileCoordinate)
+
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.location
+
+        this.sut.shouldDetermineLocationLevel()
+
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.city
+
+        assertTrue(this.workerSpy.getGeojsonLocationLevelCalled)
+        assertFalse(this.presenterSpy.presentLocationMarkersCalled)
     }
 
     //endregion

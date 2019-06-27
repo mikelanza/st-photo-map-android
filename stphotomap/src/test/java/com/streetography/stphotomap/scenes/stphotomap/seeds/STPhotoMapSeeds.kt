@@ -39,9 +39,9 @@ class STPhotoMapSeeds {
     }
 
     fun markers(): ArrayList<STPhotoMapModels.Marker> {
-        val firstAnnotation = STPhotoMapModels.Marker("1", "https://strtgrph.s3-us-west-1.amazonaws.com/processed/964d83ac70036166b4fb43c93516ab25_250_250.jpg",37.896175586962535, -122.5092990375)
-        val secondAnnotation = STPhotoMapModels.Marker("2","https://strtgrph.s3-us-west-1.amazonaws.com/processed/1575c2eeef87a57256a03b8e6d9d8eec_250_250.jpg",37.92717416710873,-122.51521212095439)
-        return arrayListOf(firstAnnotation, secondAnnotation)
+        val firstMarker = STPhotoMapModels.Marker("1", "https://strtgrph.s3-us-west-1.amazonaws.com/processed/964d83ac70036166b4fb43c93516ab25_250_250.jpg",37.896175586962535, -122.5092990375)
+        val secondMarker = STPhotoMapModels.Marker("2","https://strtgrph.s3-us-west-1.amazonaws.com/processed/1575c2eeef87a57256a03b8e6d9d8eec_250_250.jpg",37.92717416710873,-122.51521212095439)
+        return arrayListOf(firstMarker, secondMarker)
     }
 
     fun photoMarkers(): ArrayList<PhotoMarker> {

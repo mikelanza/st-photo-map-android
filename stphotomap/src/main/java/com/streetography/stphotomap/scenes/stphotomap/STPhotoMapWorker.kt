@@ -14,11 +14,15 @@ interface STPhotoMapWorkerDelegate {
 
     fun successDidGetGeojsonTileForCaching(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String, geojsonObject: GeoJSONObject)
     fun failureDidGetGeojsonTileForCaching(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String, error: OperationError)
+
+    fun successDidGetGeojsonTileForLocationLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String, geojsonObject: GeoJSONObject)
+    fun failureDidGetGeojsonTileForLocationLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String, error: OperationError)
 }
 
 open class STPhotoMapWorker(val delegate: STPhotoMapWorkerDelegate?) {
     var geojsonTileCachingQueue: OperationQueue = OperationQueue()
     var geojsonEntityLevelQueue: OperationQueue = OperationQueue()
+    var geojsonLocationLevelQueue: OperationQueue = OperationQueue()
 
     //region Get geojson for entity level
     open fun getGeojsonEntityLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
@@ -53,6 +57,26 @@ open class STPhotoMapWorker(val delegate: STPhotoMapWorkerDelegate?) {
             }
         })
         this.geojsonTileCachingQueue.addOperation(operation)
+    }
+    //endregion
+
+    //region Get geojson for location level
+    open fun getGeojsonLocationLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
+        val model = GetGeojsonTileOperationModel.Request(tileCoordinate, downloadUrl)
+        val operation = GetGeojsonTileOperation(model, object: OperationResult<GetGeojsonTileOperationModel.Response> {
+            override fun onSuccess(value: GetGeojsonTileOperationModel.Response) {
+                delegate?.successDidGetGeojsonTileForLocationLevel(tileCoordinate, keyUrl, downloadUrl, value.geoJSONObject)
+            }
+
+            override fun onFailure(error: OperationError) {
+                delegate?.failureDidGetGeojsonTileForLocationLevel(tileCoordinate, keyUrl, downloadUrl, error)
+            }
+        })
+        this.geojsonLocationLevelQueue.addOperation(operation)
+    }
+
+    open fun cancelAllGeojsonLocationLevelOperations() {
+        this.geojsonLocationLevelQueue.cancelAllOperations()
     }
     //endregion
 }

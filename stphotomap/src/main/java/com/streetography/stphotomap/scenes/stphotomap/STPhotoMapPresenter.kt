@@ -10,6 +10,7 @@ interface STPhotoMapPresentationLogic {
 
     fun presentEntityLevel(response: STPhotoMapModels.EntityZoomLevel.Response)
     fun presentLocationMarkers(response: STPhotoMapModels.LocationMarkers.Response)
+    fun presentRemoveLocationMarkers()
 }
 
 class STPhotoMapPresenter: STPhotoMapPresentationLogic {
@@ -60,5 +61,9 @@ class STPhotoMapPresenter: STPhotoMapPresentationLogic {
             it.toPhotoMarker()
         }
         this.displayer?.get()?.displayLocationMarkers(STPhotoMapModels.LocationMarkers.ViewModel(ArrayList(markers)))
+    }
+
+    override fun presentRemoveLocationMarkers() {
+        this.displayer?.get()?.displayRemoveLocationMarkers()
     }
 }

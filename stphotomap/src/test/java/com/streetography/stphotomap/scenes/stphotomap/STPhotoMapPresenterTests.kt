@@ -54,10 +54,16 @@ class STPhotoMapPresenterTests: TestCase() {
     }
 
     @Test
-    fun testPresentLocationAnnotations() {
+    fun testPresentLocationMarkers() {
         val response = STPhotoMapModels.LocationMarkers.Response(STPhotoMapSeeds().markers())
         this.sut.presentLocationMarkers(response)
 
         assertTrue(this.displayerSpy.displayLocationMarkersCalled)
+    }
+
+    @Test
+    fun testPresentRemoveLocationMarkers() {
+        this.sut.presentRemoveLocationMarkers()
+        assertTrue(this.displayerSpy.displayRemoveLocationMarkersCalled)
     }
 }
