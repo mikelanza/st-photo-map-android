@@ -3,14 +3,10 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_gravity="center"
-        android:background="@android:color/white">
+        android:layout_gravity="center">
 
-    <ImageView
+    <com.streetography.stphotomap.scenes.stphotomap.markers.MarkerImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop" />
+            android:layout_height="match_parent" />
 </FrameLayout>
