@@ -8,21 +8,16 @@ import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarker
 
 class STPhotoMapModels {
     class VisibleTiles {
-        class Request(val tiles: ArrayList<TileCoordinate>) {
-        }
+        class Request(val tiles: ArrayList<TileCoordinate>)
     }
 
     class UpdateBoundingBox {
-        class Request(val boundingBox: BoundingBox?) {
-        }
+        class Request(val boundingBox: BoundingBox?)
     }
 
     class EntityZoomLevel {
-        class Response(val entityLevel: EntityLevel) {
-        }
-
-        class ViewModel(val titleId: Int, val imageResourceId: Int) {
-        }
+        class Response(val entityLevel: EntityLevel)
+        class ViewModel(val titleId: Int, val imageResourceId: Int)
     }
 
     class Marker(val id: String,
@@ -41,10 +36,13 @@ class STPhotoMapModels {
     }
 
     class LocationMarkers {
-        class Response(val markers: ArrayList<Marker>) {
-        }
+        class Response(val markers: ArrayList<Marker>)
+        class ViewModel(val markers: ArrayList<PhotoMarker>)
+    }
 
-        class ViewModel(val markers: ArrayList<PhotoMarker>) {
-        }
+    class PhotoDetailsNavigation {
+        class Request(val photoId: String)
+        class Response(val photoId: String)
+        class ViewModel(val photoId: String)
     }
 }

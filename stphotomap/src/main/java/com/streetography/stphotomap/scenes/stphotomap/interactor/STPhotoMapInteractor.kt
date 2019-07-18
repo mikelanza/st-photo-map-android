@@ -24,6 +24,7 @@ interface STPhotoMapBusinessLogic {
     fun shouldDetermineEntityLevel()
     fun shouldCacheGeojsonObjects()
     fun shouldDetermineLocationLevel()
+    fun shouldNavigateToPhotoDetails(request: STPhotoMapModels.PhotoDetailsNavigation.Request)
 }
 
 class STPhotoMapInteractor : STPhotoMapBusinessLogic,
@@ -45,6 +46,7 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
         this.locationLevelHandler = STPhotoMapLocationLevelHandler()
     }
 
+    //region Business logic
     override fun shouldUpdateVisibleTiles(request: STPhotoMapModels.VisibleTiles.Request) {
         this.visibleTiles = request.tiles
     }
@@ -69,14 +71,19 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
     }
 
     override fun shouldDetermineLocationLevel() {
-        if (this.isLocationLevel() == false) { return }
+        if (!this.isLocationLevel()) { return }
 
         val cachedTiles = this.getVisibleCachedTiles()
         this.presentPhotoMarkersForCached(cachedTiles)
         this.locationLevelGeojsonObjectsFor(this.prepareTilesForLocationLevel())
     }
 
-    internal fun getVisibleCachedTiles(): ArrayList<STPhotoMapGeojsonCache.Tile> {
+    override fun shouldNavigateToPhotoDetails(request: STPhotoMapModels.PhotoDetailsNavigation.Request) {
+        this.presenter?.presentNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Response(request.photoId))
+    }
+    //endregion
+
+    private fun getVisibleCachedTiles(): ArrayList<STPhotoMapGeojsonCache.Tile> {
         return ArrayList(this.visibleTiles.mapNotNull { tile ->
             val uri = STPhotoMapUriBuilder().geojsonTileUri(tile)
             this.cacheHandler.cache.getTile(uri.first)
@@ -146,6 +153,7 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
     }
     //endregion
 
+    //region Location level
     override fun successDidGetGeojsonTileForLocationLevel(
         tileCoordinate: TileCoordinate,
         keyUrl: String,

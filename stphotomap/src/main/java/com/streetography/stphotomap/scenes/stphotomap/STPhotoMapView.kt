@@ -26,7 +26,8 @@ import java.net.MalformedURLException
 import java.net.URL
 
 interface STPhotoMapViewDelegate {
-    fun onMapReady(map: GoogleMap)
+    fun photoMapViewOnMapReady(googleMap: GoogleMap)
+    fun photoMapViewNavigateToPhotoDetails(photoId: String)
 }
 
 interface STPhotoMapDisplayLogic {
@@ -36,6 +37,8 @@ interface STPhotoMapDisplayLogic {
     fun displayEntityLevel(viewModel: STPhotoMapModels.EntityZoomLevel.ViewModel)
     fun displayLocationMarkers(viewModel: STPhotoMapModels.LocationMarkers.ViewModel)
     fun displayRemoveLocationMarkers()
+
+    fun displayNavigateToPhotoDetails(viewModel: STPhotoMapModels.PhotoDetailsNavigation.ViewModel)
 }
 
 public open class STPhotoMapView @JvmOverloads constructor(
@@ -137,7 +140,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.setupMapViewListeners()
         this.setupMarkerHandler()
 
-        this.delegate?.onMapReady(googleMap)
+        this.delegate?.photoMapViewOnMapReady(googleMap)
     }
 
     override fun onCameraIdle() {
@@ -244,6 +247,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.post {
             this.markerHandler?.removeAllMarkers()
         }
+    }
+
+    override fun displayNavigateToPhotoDetails(viewModel: STPhotoMapModels.PhotoDetailsNavigation.ViewModel) {
+        this.delegate?.photoMapViewNavigateToPhotoDetails(viewModel.photoId)
     }
     //endregion
 }

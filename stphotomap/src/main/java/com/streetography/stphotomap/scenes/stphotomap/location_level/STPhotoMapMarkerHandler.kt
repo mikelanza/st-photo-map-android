@@ -7,6 +7,11 @@ import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarker
 
+interface STPhotoMapMarkerHandlerDelegate {
+    fun photoMapMarkerHandlerDidReselectPhoto(photoId: String)
+    fun photoMapMarkerHandlerDidSelectPhoto(photoId: String)
+}
+
 class STPhotoMapMarkerHandler(private val context: Context, private val map: GoogleMap?): ClusterManager.OnClusterClickListener<PhotoMarker>, ClusterManager.OnClusterItemClickListener<PhotoMarker> {
     var clusterManager: ClusterManager<PhotoMarker> = ClusterManager(context, map)
     var clusterRenderer: STPhotoClusterRenderer = STPhotoClusterRenderer(this.context, this.map, this.clusterManager)
@@ -14,6 +19,8 @@ class STPhotoMapMarkerHandler(private val context: Context, private val map: Goo
 
     var selectedPhotoMarker: PhotoMarker? = null
     var selectedCluster: Cluster<PhotoMarker>? = null
+
+    val delegate: STPhotoMapMarkerHandlerDelegate? = null
 
     init {
         this.setupClusterManager()
@@ -81,6 +88,14 @@ class STPhotoMapMarkerHandler(private val context: Context, private val map: Goo
     }
 
     override fun onClusterItemClick(p0: PhotoMarker?): Boolean {
+        p0?.let {
+            if (it.isSelected) {
+                this.delegate?.photoMapMarkerHandlerDidReselectPhoto(it.model.photoId)
+            } else {
+                this.delegate?.photoMapMarkerHandlerDidSelectPhoto(it.model.photoId)
+            }
+        }
+
         this.deselectPhotoMarker()
         this.selectPhotoMarker(p0)
         return true

@@ -33,8 +33,8 @@ fun STPhotoMapInteractor.getMarkers(geojsonObject: GeoJSONObject): ArrayList<STP
 
 fun STPhotoMapInteractor.getMarkers(features: ArrayList<GeoJSONFeature>): ArrayList<STPhotoMapModels.Marker> {
     val markers = arrayListOf<STPhotoMapModels.Marker>()
-    features.forEach {
-        this.marker(it)?.let {
+    features.forEach { jsonFeature ->
+        this.marker(jsonFeature)?.let {
             markers.add(it)
         }
     }
@@ -68,9 +68,8 @@ fun STPhotoMapInteractor.locationLevelGeojsonObjectsFor(tile: TileCoordinate) {
     this.worker?.getGeojsonLocationLevel(tile, uri.first, uri.second)
 }
 
-
 fun STPhotoMapInteractor.didGetGeojsonTileForLocationLevel(geojsonObject: GeoJSONObject) {
-    if (isLocationLevel() == false) { return }
+    if (!isLocationLevel()) { return }
     val markers = this.getMarkers(geojsonObject)
     this.presentLocationMarkers(markers)
 }

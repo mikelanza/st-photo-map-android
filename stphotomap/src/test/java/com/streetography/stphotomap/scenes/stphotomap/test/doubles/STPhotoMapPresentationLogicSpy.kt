@@ -11,6 +11,8 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
     var presentLocationMarkersCalled: Boolean = false
     var presentRemoveLocationMarkers: Boolean = false
 
+    var presentNavigateToPhotoDetailsCalled: Boolean = false
+
     override fun presentLoadingState() {
         this.presentLoadingStateCalled = true
     }
@@ -29,5 +31,9 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
 
     override fun presentRemoveLocationMarkers() {
         this.presentRemoveLocationMarkers = true
+    }
+
+    override fun presentNavigateToPhotoDetails(response: STPhotoMapModels.PhotoDetailsNavigation.Response) {
+        this.presentNavigateToPhotoDetailsCalled = true
     }
 }

@@ -66,4 +66,10 @@ class STPhotoMapPresenterTests: TestCase() {
         this.sut.presentRemoveLocationMarkers()
         assertTrue(this.displayerSpy.displayRemoveLocationMarkersCalled)
     }
+
+    @Test
+    fun testPresentNavigateToPhotoDetails() {
+        this.sut.presentNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Response("photoId"))
+        assertTrue(this.displayerSpy.displayNavigateToPhotoDetailsCalled)
+    }
 }

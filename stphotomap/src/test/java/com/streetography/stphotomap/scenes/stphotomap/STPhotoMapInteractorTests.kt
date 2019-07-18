@@ -44,6 +44,7 @@ class STPhotoMapInteractorTests: TestCase() {
         super.tearDown()
     }
 
+    //region Caching
     @Test
     fun testShouldCacheGeojsonObjectsWhenCacheIsEmptyForSuccessCase() {
         this.workerSpy.geojsonObject = STPhotoMapSeeds().geojsonObject()
@@ -192,6 +193,7 @@ class STPhotoMapInteractorTests: TestCase() {
         assertEquals(1, this.sut.cacheHandler.cache.tileCount())
         assertEquals(1, this.sut.cacheHandler.activeDownloadCount())
     }
+    //endregion
 
     //region Entity level
     @Test
@@ -479,4 +481,9 @@ class STPhotoMapInteractorTests: TestCase() {
 
     //endregion
 
+    @Test
+    fun testShouldNavigateToPhotoDetails() {
+        this.sut.shouldNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Request("photoId"))
+        assertTrue(this.presenterSpy.presentNavigateToPhotoDetailsCalled)
+    }
 }

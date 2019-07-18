@@ -6,6 +6,7 @@ import com.streetography.stphotomap.R
 import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STEntityLevelViewSpy
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapBusinessLogicSpy
+import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapViewDelegateSpy
 import junit.framework.TestCase
 import org.junit.After
 import org.junit.Before
@@ -107,6 +108,15 @@ class STPhotoMapViewTests: TestCase() {
         assertTrue(this.entityLevelViewSpy.setTitleCalled)
         assertTrue(this.entityLevelViewSpy.setImageCalled)
         assertTrue(this.entityLevelViewSpy.showCalled)
+    }
+
+    @Test
+    fun testDisplayNavigateToPhotoDetails() {
+        val delegateSpy = STPhotoMapViewDelegateSpy()
+        this.sut.delegate = delegateSpy
+
+        this.sut.displayNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.ViewModel("photoId"))
+        assertTrue(delegateSpy.photoMapViewNavigateToPhotoDetailsForPhotoIdCalled)
     }
     //endregion
 
