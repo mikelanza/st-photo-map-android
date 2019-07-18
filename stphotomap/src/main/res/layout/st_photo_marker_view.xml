@@ -5,7 +5,7 @@
         android:layout_height="80dp"
         android:layout_gravity="center">
 
-    <com.streetography.stphotomap.scenes.stphotomap.markers.MarkerImageView
+    <com.streetography.stphotomap.scenes.stphotomap.markers.photo.MarkerImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

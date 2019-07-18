@@ -1,4 +1,4 @@
-package com.streetography.stphotomap.scenes.stphotomap.markers
+package com.streetography.stphotomap.scenes.stphotomap.markers.cluster
 
 import android.content.Context
 import android.graphics.Canvas
@@ -9,6 +9,8 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.widget.RelativeLayout
 import com.streetography.stphotomap.extensions.view.transformDimension
+import com.streetography.stphotomap.scenes.stphotomap.markers.photo.MarkerImageView
+import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarker
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -18,7 +20,8 @@ class PhotoClusterView @JvmOverloads constructor(
     private val itemHeight = 80F
     private val itemOffset = 12F
 
-    private var titleTextView: ClusterTextView = ClusterTextView(this.context)
+    private var titleTextView: ClusterTextView =
+        ClusterTextView(this.context)
     private var imageViews: ArrayList<MarkerImageView> = ArrayList()
     private var lines: ArrayList<Line> = ArrayList()
 
@@ -86,7 +89,14 @@ class PhotoClusterView @JvmOverloads constructor(
             val startY = centerPoint.y + (offset * sin(radians))
             val stopX = startX + (radius * cos(radians))
             val stopY = startY + (radius * sin(radians))
-            this.lines.add(Line(startX.toFloat(), startY.toFloat(), stopX.toFloat(), stopY.toFloat()))
+            this.lines.add(
+                Line(
+                    startX.toFloat(),
+                    startY.toFloat(),
+                    stopX.toFloat(),
+                    stopY.toFloat()
+                )
+            )
         }
     }
     //endregion
@@ -98,7 +108,8 @@ class PhotoClusterView @JvmOverloads constructor(
     }
 
     private fun setupTitleTextView() {
-        this.titleTextView = ClusterTextView(this.context)
+        this.titleTextView =
+            ClusterTextView(this.context)
         this.titleTextView.text = this.count.toString()
 
         val width = this.transformDimension(this.titleTextView.titleWidth).toInt()
@@ -164,7 +175,11 @@ class PhotoClusterView @JvmOverloads constructor(
         val deltaRadians: Double = totalRadians / this.count.toDouble()
         val startingRadians: Double = Math.toRadians(90.0)
         val radius: Float = if (this.count <=7) 80F else 100F
-        return Elements(startingRadians, deltaRadians, radius)
+        return Elements(
+            startingRadians,
+            deltaRadians,
+            radius
+        )
     }
 
     private fun centerPoint(): Point {

@@ -6,7 +6,7 @@ import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
 import com.streetography.stphotomap.models.location.STLocation
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapModels
-import com.streetography.stphotomap.scenes.stphotomap.markers.PhotoMarker
+import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarker
 import org.json.JSONObject
 
 class STPhotoMapSeeds {

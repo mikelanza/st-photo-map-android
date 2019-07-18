@@ -1,43 +1,41 @@
 package com.streetography.stphotomap.scenes.stphotomap.location_level
 
 import android.content.Context
+import android.util.Log
 import com.google.android.gms.maps.GoogleMap
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
-import com.streetography.stphotomap.scenes.stphotomap.markers.PhotoMarker
+import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarker
 
-class STPhotoMapMarkerHandler(context: Context, map: GoogleMap?): ClusterManager.OnClusterClickListener<PhotoMarker>, ClusterManager.OnClusterItemClickListener<PhotoMarker> {
-    private val context: Context
-    private val map: GoogleMap?
-    var clusterManager: ClusterManager<PhotoMarker>
-    var markers: ArrayList<PhotoMarker>
+class STPhotoMapMarkerHandler(private val context: Context, private val map: GoogleMap?): ClusterManager.OnClusterClickListener<PhotoMarker>, ClusterManager.OnClusterItemClickListener<PhotoMarker> {
+    var clusterManager: ClusterManager<PhotoMarker> = ClusterManager(context, map)
+    var clusterRenderer: STPhotoClusterRenderer = STPhotoClusterRenderer(this.context, this.map, this.clusterManager)
+    var markers: ArrayList<PhotoMarker> = arrayListOf()
+
+    var selectedPhotoMarker: PhotoMarker? = null
+    var selectedCluster: Cluster<PhotoMarker>? = null
 
     init {
-        this.context = context
-        this.map = map
-        this.markers = arrayListOf()
-        this.clusterManager = ClusterManager(context, map)
-
         this.setupClusterManager()
         this.setupGoogleMap()
     }
 
     private fun setupClusterManager() {
-        clusterManager.setRenderer(STPhotoClusterRenderer(context, map, clusterManager))
-        clusterManager.setOnClusterClickListener(this)
-        clusterManager.setOnClusterItemClickListener(this)
+        this.clusterManager.setRenderer(this.clusterRenderer)
+        this.clusterManager.setOnClusterClickListener(this)
+        this.clusterManager.setOnClusterItemClickListener(this)
     }
 
     private fun setupGoogleMap() {
-        map?.setOnMarkerClickListener(clusterManager)
-        map?.setOnInfoWindowClickListener(clusterManager)
+        this.map?.setOnMarkerClickListener(this.clusterManager)
+        this.map?.setOnInfoWindowClickListener(this.clusterManager)
     }
 
     fun addMarkers(markers: ArrayList<PhotoMarker>) {
         markers.forEach {
             this.addMarker(it)
         }
-        clusterManager.cluster()
+        this.clusterManager.cluster()
     }
 
     fun removeAllMarkers() {
@@ -46,27 +44,58 @@ class STPhotoMapMarkerHandler(context: Context, map: GoogleMap?): ClusterManager
     }
 
     private fun addMarker(marker: PhotoMarker) {
-        if (this.alreadyExists(marker) == false) {
-            markers.add(marker)
-            clusterManager.addItem(marker)
+        if (!this.alreadyExists(marker)) {
+            this.markers.add(marker)
+            this.clusterManager.addItem(marker)
         }
     }
 
     private fun alreadyExists(marker: PhotoMarker): Boolean {
-        val first = this.markers.firstOrNull {
-            it.model.photoId == marker.model.photoId
+        return this.markers.firstOrNull { it.model.photoId == marker.model.photoId } != null
+    }
+
+    private fun removeMarker(marker: PhotoMarker) {
+        if (this.alreadyExists(marker)) {
+            this.markers.remove(marker)
+            this.clusterManager.removeItem(marker)
         }
-        first?.let {
-            return true
+    }
+
+    private fun updateMarker(marker: PhotoMarker?) {
+        this.markers.forEach {
+            if (it.model.photoId == marker?.model?.photoId) {
+                it.update(marker)
+            }
         }
-        return false
+
+        this.clusterManager.algorithm.items.forEach {
+            if (it.model.photoId == marker?.model?.photoId) {
+                it.update(marker)
+            }
+        }
     }
 
     override fun onClusterClick(p0: Cluster<PhotoMarker>?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Log.i("Marker handler", "onClusterClick size = " + p0?.size)
+        return true
     }
 
     override fun onClusterItemClick(p0: PhotoMarker?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        this.deselectPhotoMarker()
+        this.selectPhotoMarker(p0)
+        return true
+    }
+
+    private fun deselectPhotoMarker() {
+        this.selectedPhotoMarker?.isSelected = false
+        this.updateMarker(this.selectedPhotoMarker)
+        this.clusterRenderer.updatePhotoMarker(this.selectedPhotoMarker)
+    }
+
+    private fun selectPhotoMarker(marker: PhotoMarker?) {
+        this.selectedPhotoMarker = marker
+        this.selectedPhotoMarker?.isSelected = true
+        this.updateMarker(this.selectedPhotoMarker)
+        this.clusterRenderer.updatePhotoMarker(this.selectedPhotoMarker)
     }
 }

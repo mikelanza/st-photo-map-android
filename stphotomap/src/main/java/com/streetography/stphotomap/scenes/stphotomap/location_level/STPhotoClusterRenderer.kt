@@ -6,7 +6,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.view.View
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -15,29 +15,39 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
-import com.streetography.stphotomap.scenes.stphotomap.markers.PhotoClusterView
-import com.streetography.stphotomap.scenes.stphotomap.markers.PhotoMarker
-import com.streetography.stphotomap.scenes.stphotomap.markers.PhotoMarkerView
+import com.streetography.stphotomap.scenes.stphotomap.markers.cluster.PhotoClusterView
+import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarker
+import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarkerView
 
 class STPhotoClusterRenderer(private val context: Context, map: GoogleMap?, clusterManager: ClusterManager<PhotoMarker>?) :
     DefaultClusterRenderer<PhotoMarker>(context, map, clusterManager) {
 
-    private val markerView: PhotoMarkerView = PhotoMarkerView(context, null)
-    private val clusterView: PhotoClusterView = PhotoClusterView(context, null)
+    private val markerView: PhotoMarkerView =
+        PhotoMarkerView(context, null)
+    private val clusterView: PhotoClusterView =
+        PhotoClusterView(context, null)
 
-    //region Cluster item rendition
+    fun updatePhotoMarker(photoMarker: PhotoMarker?) {
+        val marker: Marker? = this.getMarker(photoMarker)
+        this.onClusterItemRendered(photoMarker, marker)
+    }
+
+    //region Cluster item logic
     override fun onBeforeClusterItemRendered(item: PhotoMarker?, markerOptions: MarkerOptions?) {
         markerView.setImageResource(null)
         markerOptions?.icon(BitmapDescriptorFactory.fromBitmap(makeMarkerIcon()))?.anchor(0.5f, 1.0f)
     }
 
     override fun onClusterItemRendered(clusterItem: PhotoMarker?, marker: Marker?) {
-        markerView.setImageResource(null)
+        clusterItem?.let {
+            markerView.setImageResource(null)
+            markerView.setIsSelected(it.isSelected)
 
-        this.loadImage(clusterItem?.model?.imageUrl, completion = { drawable ->
-            markerView.setImageResource(drawable)
-            marker?.setIcon(BitmapDescriptorFactory.fromBitmap(makeMarkerIcon()))
-        })
+            this.loadImage(it.model.imageUrl, completion = { drawable ->
+                markerView.setImageResource(drawable)
+                marker?.setIcon(BitmapDescriptorFactory.fromBitmap(makeMarkerIcon()))
+            })
+        }
     }
 
     private fun makeMarkerIcon(): Bitmap {
@@ -45,7 +55,7 @@ class STPhotoClusterRenderer(private val context: Context, map: GoogleMap?, clus
     }
     //endregion
 
-    //region Cluster rendition
+    //region Cluster logic
     override fun onBeforeClusterRendered(cluster: Cluster<PhotoMarker>?, markerOptions: MarkerOptions?) {
         cluster?.let {
             clusterView.setPhotoMarkers(ArrayList(it.items))
@@ -78,11 +88,15 @@ class STPhotoClusterRenderer(private val context: Context, map: GoogleMap?, clus
     private fun loadImage(url: String?, completion: (image: Drawable) -> Unit) {
         Glide.with(this.context)
             .load(url)
-            .into(object: SimpleTarget<Drawable>() {
-            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                completion(resource)
-            }
-        })
+            .into(object: CustomTarget<Drawable>() {
+                override fun onLoadCleared(placeholder: Drawable?) {
+
+                }
+
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                    completion(resource)
+                }
+            })
     }
 
     private fun makeIcon(view: View): Bitmap {

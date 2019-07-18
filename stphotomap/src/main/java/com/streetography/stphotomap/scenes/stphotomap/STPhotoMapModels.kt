@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.geojson.BoundingBox
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
-import com.streetography.stphotomap.scenes.stphotomap.markers.PhotoMarker
+import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarker
 
 class STPhotoMapModels {
     class VisibleTiles {
@@ -31,7 +31,12 @@ class STPhotoMapModels {
                  val longitude: Double) {
 
         fun toPhotoMarker(): PhotoMarker {
-            return PhotoMarker(id, LatLng(latitude, longitude), imageUrl, null)
+            return PhotoMarker(
+                id,
+                LatLng(latitude, longitude),
+                imageUrl,
+                null
+            )
         }
     }
 

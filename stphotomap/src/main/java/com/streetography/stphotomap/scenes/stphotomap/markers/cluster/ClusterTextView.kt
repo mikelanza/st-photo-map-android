@@ -1,4 +1,4 @@
-package com.streetography.stphotomap.scenes.stphotomap.markers
+package com.streetography.stphotomap.scenes.stphotomap.markers.cluster
 
 import android.content.Context
 import android.graphics.Color
@@ -9,6 +9,7 @@ import android.support.v4.graphics.ColorUtils
 import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.TextView
+import com.streetography.stphotomap.extensions.view.transformDimension
 
 class ClusterTextView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): TextView(context, attrs, defStyleAttr) {

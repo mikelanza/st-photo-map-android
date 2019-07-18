@@ -1,4 +1,4 @@
-package com.streetography.stphotomap.scenes.stphotomap.markers
+package com.streetography.stphotomap.scenes.stphotomap.markers.photo
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -23,5 +23,9 @@ class PhotoMarkerView(context: Context, attrs: AttributeSet?) : FrameLayout(cont
 
     fun setImageResource(drawable: Drawable?) {
         this.imageView?.setImageDrawable(drawable)
+    }
+
+    fun setIsSelected(isSelected: Boolean) {
+        this.imageView?.setIsSelected(isSelected)
     }
 }
