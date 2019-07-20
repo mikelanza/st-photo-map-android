@@ -10,6 +10,7 @@ class STPhotoMapBusinessLogicSpy: STPhotoMapBusinessLogic {
     var shouldUpdateBoundingBoxCalled: Boolean = false
     var shouldDetermineLocationLevelCalled: Boolean = false
     var shouldNavigateToPhotoDetailsCalled: Boolean = false
+    var shouldGetPhotoDetailsForPhotoMarkerCalled: Boolean = false
 
     override fun shouldUpdateVisibleTiles(request: STPhotoMapModels.VisibleTiles.Request) {
         this.shouldUpdateVisibleTilesCalled = true
@@ -33,5 +34,9 @@ class STPhotoMapBusinessLogicSpy: STPhotoMapBusinessLogic {
 
     override fun shouldNavigateToPhotoDetails(request: STPhotoMapModels.PhotoDetailsNavigation.Request) {
         this.shouldNavigateToPhotoDetailsCalled = true
+    }
+
+    override fun shouldGetPhotoDetailsForPhotoMarker(request: STPhotoMapModels.PhotoDetails.Request) {
+        this.shouldGetPhotoDetailsForPhotoMarkerCalled = true
     }
 }

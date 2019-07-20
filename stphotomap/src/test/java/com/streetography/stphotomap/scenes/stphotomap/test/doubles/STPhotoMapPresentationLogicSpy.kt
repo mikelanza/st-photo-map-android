@@ -13,6 +13,9 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
 
     var presentNavigateToPhotoDetailsCalled: Boolean = false
 
+    var presentLocationOverlayCalled: Boolean = false
+    var presentRemoveLocationOverlayCalled: Boolean = false
+
     override fun presentLoadingState() {
         this.presentLoadingStateCalled = true
     }
@@ -35,5 +38,13 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
 
     override fun presentNavigateToPhotoDetails(response: STPhotoMapModels.PhotoDetailsNavigation.Response) {
         this.presentNavigateToPhotoDetailsCalled = true
+    }
+
+    override fun presentLocationOverlay(response: STPhotoMapModels.LocationOverlay.Response) {
+        this.presentLocationOverlayCalled = true
+    }
+
+    override fun presentRemoveLocationOverlay() {
+        this.presentRemoveLocationOverlayCalled = true
     }
 }

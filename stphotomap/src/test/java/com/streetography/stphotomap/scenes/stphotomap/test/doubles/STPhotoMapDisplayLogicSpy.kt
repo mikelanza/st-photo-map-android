@@ -6,10 +6,16 @@ import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapModels
 class STPhotoMapDisplayLogicSpy: STPhotoMapDisplayLogic {
     var displayLoadingStateCalled: Boolean = false
     var displayNotLoadingStateCalled: Boolean = false
+
     var displayEntityLevelCalled: Boolean = false
+
     var displayLocationMarkersCalled: Boolean = false
     var displayRemoveLocationMarkersCalled: Boolean = false
+
     var displayNavigateToPhotoDetailsCalled: Boolean = false
+
+    var displayLocationOverlayCalled: Boolean = false
+    var displayRemoveLocationOverlayCalled: Boolean = false
 
     override fun displayLoadingState() {
         this.displayLoadingStateCalled = true
@@ -33,5 +39,13 @@ class STPhotoMapDisplayLogicSpy: STPhotoMapDisplayLogic {
 
     override fun displayNavigateToPhotoDetails(viewModel: STPhotoMapModels.PhotoDetailsNavigation.ViewModel) {
         this.displayNavigateToPhotoDetailsCalled = true
+    }
+
+    override fun displayLocationOverlay(viewModel: STPhotoMapModels.LocationOverlay.ViewModel) {
+        this.displayLocationOverlayCalled = true
+    }
+
+    override fun displayRemoveLocationOverlay() {
+        this.displayRemoveLocationOverlayCalled = true
     }
 }

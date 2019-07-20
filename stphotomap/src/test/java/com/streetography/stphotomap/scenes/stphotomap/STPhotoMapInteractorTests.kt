@@ -321,8 +321,7 @@ class STPhotoMapInteractorTests: TestCase() {
 
     @Test
     fun testShouldDetermineEntityLevelWhenNewEntityLevelIsLocation() {
-        workerSpy.geojsonObject = STPhotoMapSeeds().locationGeojsonObject()
-
+        this.workerSpy.geojsonObject = STPhotoMapSeeds().locationGeojsonObject()
 
         this.sut.cacheHandler.cache.removeAllTiles()
         this.sut.cacheHandler.removeAllActiveDownloads()
@@ -330,9 +329,7 @@ class STPhotoMapInteractorTests: TestCase() {
         this.sut.entityLevelHandler.entityLevel = EntityLevel.unknown
         this.sut.visibleTiles = arrayListOf(STPhotoMapSeeds().tileCoordinate)
 
-
         this.sut.cacheHandler.removeAllActiveDownloads()
-
 
         this.sut.shouldDetermineEntityLevel()
 
@@ -382,7 +379,6 @@ class STPhotoMapInteractorTests: TestCase() {
     //endregion
 
     //region Location level
-
     @Test
     fun testShouldDetermineLocationLevelWhenCacheIsNotEmptyAndEntityLevelIsLocation() {
         val tileCoordinate = STPhotoMapSeeds().tileCoordinate
@@ -451,7 +447,6 @@ class STPhotoMapInteractorTests: TestCase() {
 
         this.sut.entityLevelHandler.entityLevel = EntityLevel.location
 
-
         this.sut.shouldDetermineLocationLevel()
 
         assertTrue(this.workerSpy.getGeojsonLocationLevelCalled)
@@ -478,12 +473,40 @@ class STPhotoMapInteractorTests: TestCase() {
         assertTrue(this.workerSpy.getGeojsonLocationLevelCalled)
         assertFalse(this.presenterSpy.presentLocationMarkersCalled)
     }
-
     //endregion
 
     @Test
     fun testShouldNavigateToPhotoDetails() {
         this.sut.shouldNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Request("photoId"))
         assertTrue(this.presenterSpy.presentNavigateToPhotoDetailsCalled)
+    }
+
+    @Test
+    fun testShouldGetPhotoDetailsForPhotoMarkerWhenEntityLevelIsNotLocation() {
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.block
+        this.sut.shouldGetPhotoDetailsForPhotoMarker(STPhotoMapModels.PhotoDetails.Request("photoId"))
+        assertFalse(this.presenterSpy.presentLoadingStateCalled)
+        assertFalse(this.workerSpy.getPhotoDetailsForPhotoMarkerCalled)
+    }
+
+    @Test
+    fun testShouldGetPhotoDetailsForPhotoMarkerWhenEntityLevelIsLocationForSuccessCase() {
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.location
+        this.sut.shouldGetPhotoDetailsForPhotoMarker(STPhotoMapModels.PhotoDetails.Request("photoId"))
+        assertTrue(this.presenterSpy.presentLoadingStateCalled)
+        assertTrue(this.workerSpy.getPhotoDetailsForPhotoMarkerCalled)
+        assertTrue(this.presenterSpy.presentNotLoadingStateCalled)
+        assertTrue(this.presenterSpy.presentLocationOverlayCalled)
+    }
+
+    @Test
+    fun testShouldGetPhotoDetailsForPhotoMarkerWhenEntityLevelIsLocationForFailureCase() {
+        this.workerSpy.shouldFailGetPhotoDetailsForPhotoMarker = true
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.location
+        this.sut.shouldGetPhotoDetailsForPhotoMarker(STPhotoMapModels.PhotoDetails.Request("photoId"))
+        assertTrue(this.presenterSpy.presentLoadingStateCalled)
+        assertTrue(this.workerSpy.getPhotoDetailsForPhotoMarkerCalled)
+        assertTrue(this.presenterSpy.presentNotLoadingStateCalled)
+        assertFalse(this.presenterSpy.presentLocationOverlayCalled)
     }
 }

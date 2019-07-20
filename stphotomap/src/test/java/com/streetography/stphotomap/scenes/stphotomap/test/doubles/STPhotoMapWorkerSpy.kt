@@ -2,10 +2,12 @@ package com.streetography.stphotomap.scenes.stphotomap.test.doubles
 
 import android.os.Handler
 import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
+import com.streetography.stphotomap.models.photo.STPhoto
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.operations.base.errors.OperationError
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapWorker
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapWorkerDelegate
+import java.util.*
 
 class STPhotoMapWorkerSpy(delegate: STPhotoMapWorkerDelegate?): STPhotoMapWorker(delegate) {
     var delay: Long = 0
@@ -18,10 +20,12 @@ class STPhotoMapWorkerSpy(delegate: STPhotoMapWorkerDelegate?): STPhotoMapWorker
     var getGeojsonTileForEntityLevelCalled: Boolean = false
     var cancelAllGeojsonEntityLevelOperationsCalled: Boolean = false
 
-    var shouldFailGetGeojsonLocationLevelCalled: Boolean = false
+    var shouldFailGetGeojsonLocationLevel: Boolean = false
     var getGeojsonLocationLevelCalled: Boolean = false
     var cancelAllGeojsonLocationLevelOperationsCalled: Boolean = false
 
+    var shouldFailGetPhotoDetailsForPhotoMarker: Boolean = false
+    var getPhotoDetailsForPhotoMarkerCalled: Boolean = false
 
     override fun getGeojsonTileForCaching(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
         this.getGeojsonTileForCachingCalled = true
@@ -83,7 +87,7 @@ class STPhotoMapWorkerSpy(delegate: STPhotoMapWorkerDelegate?): STPhotoMapWorker
     }
 
     private fun didGetGeojsonLocationLevel(tileCoordinate: TileCoordinate, keyUrl: String, downloadUrl: String) {
-        if (this.shouldFailGetGeojsonLocationLevelCalled) {
+        if (this.shouldFailGetGeojsonLocationLevel) {
             this.delegate?.failureDidGetGeojsonTileForLocationLevel(tileCoordinate, keyUrl, downloadUrl, OperationError.NO_DATA_AVAILABLE)
         } else {
             this.delegate?.successDidGetGeojsonTileForLocationLevel(tileCoordinate, keyUrl, downloadUrl, this.geojsonObject)
@@ -94,4 +98,26 @@ class STPhotoMapWorkerSpy(delegate: STPhotoMapWorkerDelegate?): STPhotoMapWorker
         this.cancelAllGeojsonLocationLevelOperationsCalled = true
     }
     //end
+
+    //region Photo details
+    override fun getPhotoDetailsForPhotoMarker(photoId: String) {
+        this.getPhotoDetailsForPhotoMarkerCalled = true
+
+        if (this.delay == 0L) {
+            this.didGetPhotoDetailsForPhotoMarker(photoId)
+        } else {
+            Handler().postDelayed({
+                this.didGetPhotoDetailsForPhotoMarker(photoId)
+            }, this.delay)
+        }
+    }
+
+    private fun didGetPhotoDetailsForPhotoMarker(photoId: String) {
+        if (this.shouldFailGetPhotoDetailsForPhotoMarker) {
+            this.delegate?.failureDidGetPhotoDetailsForPhotoMarker(photoId, OperationError.NO_DATA_AVAILABLE)
+        } else {
+            this.delegate?.successDidGetPhotoDetailsForPhotoMarker(photoId, STPhoto(photoId, Date()))
+        }
+    }
+    //endregion
 }

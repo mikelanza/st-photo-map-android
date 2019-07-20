@@ -1,6 +1,7 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
 import com.streetography.stphotomap.models.entity_level.EntityLevel
+import com.streetography.stphotomap.models.photo.STPhoto
 import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapDisplayLogicSpy
 import junit.framework.TestCase
@@ -10,6 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import java.lang.ref.WeakReference
+import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
 class STPhotoMapPresenterTests: TestCase() {
@@ -71,5 +73,17 @@ class STPhotoMapPresenterTests: TestCase() {
     fun testPresentNavigateToPhotoDetails() {
         this.sut.presentNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Response("photoId"))
         assertTrue(this.displayerSpy.displayNavigateToPhotoDetailsCalled)
+    }
+
+    @Test
+    fun testPresentLocationOverlay() {
+        this.sut.presentLocationOverlay(STPhotoMapModels.LocationOverlay.Response(STPhoto("photoId", Date())))
+        assertTrue(this.displayerSpy.displayLocationOverlayCalled)
+    }
+
+    @Test
+    fun testPresentRemoveLocationOverlay() {
+        this.sut.presentRemoveLocationOverlay()
+        assertTrue(this.displayerSpy.displayRemoveLocationOverlayCalled)
     }
 }

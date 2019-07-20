@@ -14,13 +14,16 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.streetography.stphotomap.R
 import com.streetography.stphotomap.extensions.google_map.visibleTiles
+import com.streetography.stphotomap.extensions.view.transformDimension
 import com.streetography.stphotomap.extensions.visible_region.boundingBox
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import com.streetography.stphotomap.scenes.stphotomap.location_level.STPhotoMapMarkerHandler
+import com.streetography.stphotomap.scenes.stphotomap.location_level.STPhotoMapMarkerHandlerDelegate
 import com.streetography.stphotomap.scenes.stphotomap.views.STEntityLevelView
+import com.streetography.stphotomap.scenes.stphotomap.views.STLocationOverlayView
 import java.lang.ref.WeakReference
 import java.net.MalformedURLException
 import java.net.URL
@@ -39,16 +42,22 @@ interface STPhotoMapDisplayLogic {
     fun displayRemoveLocationMarkers()
 
     fun displayNavigateToPhotoDetails(viewModel: STPhotoMapModels.PhotoDetailsNavigation.ViewModel)
+
+    fun displayLocationOverlay(viewModel: STPhotoMapModels.LocationOverlay.ViewModel)
+    fun displayRemoveLocationOverlay()
 }
 
 public open class STPhotoMapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr),
-    STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener {
+    STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener,
+    STPhotoMapMarkerHandlerDelegate {
     var interactor: STPhotoMapBusinessLogic? = null
 
     var entityLevelView: STEntityLevelView? = null
     var mapView: GoogleMap? = null
     var progressBar: ProgressBar? = null
+    var locationOverlayView: STLocationOverlayView? = null
+
     var markerHandler: STPhotoMapMarkerHandler? = null
 
     public var delegate: STPhotoMapViewDelegate? = null
@@ -56,6 +65,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
     init {
         this.setup()
         this.setupSubviews()
+        this.addSubviews()
     }
 
     private fun setup() {
@@ -69,7 +79,8 @@ public open class STPhotoMapView @JvmOverloads constructor(
     }
 
     private fun setupMarkerHandler() {
-        markerHandler = STPhotoMapMarkerHandler(getContext(), mapView)
+        this.markerHandler = STPhotoMapMarkerHandler(this.context, this.mapView)
+        this.markerHandler?.delegate = this
     }
 
     //region Subviews configuration
@@ -77,6 +88,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.setupMapView()
         this.setupProgressBar()
         this.setupEntityView()
+        this.setupLocationOverlayView()
     }
 
     private fun setupMapView() {
@@ -101,9 +113,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     private fun setupProgressBar() {
         this.progressBar = ProgressBar(this.context, null, android.R.attr.progressBarStyleHorizontal)
-        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-        layoutParams.addRule(ALIGN_PARENT_TOP)
-        this.progressBar?.layoutParams = layoutParams
+        this.progressBar?.id = View.generateViewId()
         this.progressBar?.progress = 0
         this.progressBar?.max = 100
         this.progressBar?.visibility = View.GONE
@@ -111,17 +121,49 @@ public open class STPhotoMapView @JvmOverloads constructor(
         val drawable = this.progressBar?.progressDrawable?.mutate()
         drawable?.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN)
         this.progressBar?.progressDrawable = drawable
-        this.addView(this.progressBar)
     }
 
     private fun setupEntityView() {
         this.entityLevelView = STEntityLevelView(this.context, null)
-        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        layoutParams.addRule(CENTER_IN_PARENT)
-        this.entityLevelView?.layoutParams = layoutParams
+        this.entityLevelView?.id = View.generateViewId()
         this.entityLevelView?.visibility = View.GONE
         this.entityLevelView?.setBackgroundColor(Color.TRANSPARENT)
-        this.addView(this.entityLevelView)
+    }
+
+    private fun setupLocationOverlayView() {
+        this.locationOverlayView = STLocationOverlayView(this.context)
+        this.locationOverlayView?.id = View.generateViewId()
+        this.locationOverlayView?.visibility = View.GONE
+    }
+    //endregion
+
+    //region Subviews addition
+    private fun addSubviews() {
+        this.addProgressBar()
+        this.addEntityView()
+        this.addLocationOverlayView()
+    }
+
+    private fun addProgressBar() {
+        val layoutParameters = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        layoutParameters.addRule(ALIGN_PARENT_TOP)
+        this.addView(this.progressBar, layoutParameters)
+    }
+
+    private fun addEntityView() {
+        val layoutParameters = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        layoutParameters.addRule(CENTER_IN_PARENT)
+        this.addView(this.entityLevelView, layoutParameters)
+    }
+
+    private fun addLocationOverlayView() {
+        val layoutParameters = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        val marginLeft = this.transformDimension(15F).toInt()
+        val marginBottom = this.transformDimension(15F).toInt()
+        val marginRight = this.transformDimension(75F).toInt()
+        layoutParameters.setMargins(marginLeft, 0, marginRight, marginBottom)
+        layoutParameters.addRule(ALIGN_PARENT_BOTTOM)
+        this.addView(this.locationOverlayView, layoutParameters)
     }
     //endregion
 
@@ -177,11 +219,11 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     //region Map logic
     fun moveMapCameraTo(latLng: LatLng) {
-       this.post({
+       this.post {
            mapView?.moveCamera(
                CameraUpdateFactory.newLatLng(latLng)
            )
-       })
+       }
     }
     //endregion
 
@@ -251,6 +293,30 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     override fun displayNavigateToPhotoDetails(viewModel: STPhotoMapModels.PhotoDetailsNavigation.ViewModel) {
         this.delegate?.photoMapViewNavigateToPhotoDetails(viewModel.photoId)
+    }
+
+    override fun displayLocationOverlay(viewModel: STPhotoMapModels.LocationOverlay.ViewModel) {
+        this.post {
+            this.locationOverlayView?.model = STLocationOverlayView.Model(viewModel.photoId, viewModel.title, viewModel.time, viewModel.description)
+            this.locationOverlayView?.visibility = View.VISIBLE
+        }
+    }
+
+    override fun displayRemoveLocationOverlay() {
+        this.post {
+            this.locationOverlayView?.visibility = View.GONE
+            this.locationOverlayView?.model = null
+        }
+    }
+    //endregion
+
+    //region Marker handler delegate
+    override fun photoMapMarkerHandlerDidReselectPhoto(photoId: String) {
+        this.interactor?.shouldNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Request(photoId))
+    }
+
+    override fun photoMapMarkerHandlerDidSelectPhoto(photoId: String) {
+        this.interactor?.shouldGetPhotoDetailsForPhotoMarker(STPhotoMapModels.PhotoDetails.Request(photoId))
     }
     //endregion
 }

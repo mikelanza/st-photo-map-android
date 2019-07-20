@@ -4,6 +4,7 @@ import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
 import com.streetography.stphotomap.models.parameters.KeyValue
 import com.streetography.stphotomap.models.parameters.Parameters
+import com.streetography.stphotomap.models.photo.STPhoto
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.operations.base.errors.OperationError
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapModels
@@ -25,11 +26,12 @@ interface STPhotoMapBusinessLogic {
     fun shouldCacheGeojsonObjects()
     fun shouldDetermineLocationLevel()
     fun shouldNavigateToPhotoDetails(request: STPhotoMapModels.PhotoDetailsNavigation.Request)
+    fun shouldGetPhotoDetailsForPhotoMarker(request: STPhotoMapModels.PhotoDetails.Request)
 }
 
 class STPhotoMapInteractor : STPhotoMapBusinessLogic,
     STPhotoMapWorkerDelegate, STPhotoMapEntityLevelHandlerDelegate {
-    var worker: STPhotoMapWorker?
+    var worker: STPhotoMapWorker? = STPhotoMapWorker(this)
     var presenter: STPhotoMapPresentationLogic? = null
 
     var visibleTiles: ArrayList<TileCoordinate>
@@ -38,8 +40,6 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
     var locationLevelHandler: STPhotoMapLocationLevelHandler
 
     init {
-        this.worker = STPhotoMapWorker(this)
-
         this.visibleTiles = ArrayList()
         this.cacheHandler = STPhotoMapGeojsonCacheHandler()
         this.entityLevelHandler = STPhotoMapEntityLevelHandler(this)
@@ -80,6 +80,13 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
 
     override fun shouldNavigateToPhotoDetails(request: STPhotoMapModels.PhotoDetailsNavigation.Request) {
         this.presenter?.presentNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Response(request.photoId))
+    }
+
+    override fun shouldGetPhotoDetailsForPhotoMarker(request: STPhotoMapModels.PhotoDetails.Request) {
+        if (this.isLocationLevel()) {
+            this.presenter?.presentLoadingState()
+            this.worker?.getPhotoDetailsForPhotoMarker(request.photoId)
+        }
     }
     //endregion
 
@@ -171,6 +178,23 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
         error: OperationError
     ) {
         this.locationLevelHandler.removeActiveDownload(keyUrl)
+    }
+    //endregion
+
+    //region Photo details
+    override fun successDidGetPhotoDetailsForPhotoMarker(photoId: String, photo: STPhoto) {
+        this.presenter?.presentNotLoadingState()
+        this.shouldPresentLocationOverlay(photo)
+    }
+
+    override fun failureDidGetPhotoDetailsForPhotoMarker(photoId: String, error: OperationError) {
+        this.presenter?.presentNotLoadingState()
+    }
+
+    private fun shouldPresentLocationOverlay(photo: STPhoto) {
+        if (this.isLocationLevel()) {
+            this.presenter?.presentLocationOverlay(STPhotoMapModels.LocationOverlay.Response(photo))
+        }
     }
     //endregion
 }

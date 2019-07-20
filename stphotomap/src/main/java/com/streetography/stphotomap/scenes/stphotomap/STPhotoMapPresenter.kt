@@ -3,6 +3,7 @@ package com.streetography.stphotomap.scenes.stphotomap
 import com.streetography.stphotomap.R
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import java.lang.ref.WeakReference
+import java.text.SimpleDateFormat
 
 interface STPhotoMapPresentationLogic {
     fun presentLoadingState()
@@ -13,6 +14,9 @@ interface STPhotoMapPresentationLogic {
     fun presentRemoveLocationMarkers()
 
     fun presentNavigateToPhotoDetails(response: STPhotoMapModels.PhotoDetailsNavigation.Response)
+
+    fun presentLocationOverlay(response: STPhotoMapModels.LocationOverlay.Response)
+    fun presentRemoveLocationOverlay()
 }
 
 class STPhotoMapPresenter: STPhotoMapPresentationLogic {
@@ -71,5 +75,17 @@ class STPhotoMapPresenter: STPhotoMapPresentationLogic {
 
     override fun presentNavigateToPhotoDetails(response: STPhotoMapModels.PhotoDetailsNavigation.Response) {
         this.displayer?.get()?.displayNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.ViewModel(response.photoId))
+    }
+
+    override fun presentLocationOverlay(response: STPhotoMapModels.LocationOverlay.Response) {
+        val photoId = response.photo.id
+        val title = response.photo.user?.name ?: response.photo.fhUsername
+        val time = SimpleDateFormat("MMMM dd, yyyy").format(response.photo.createdAt)
+        val description = response.photo.text
+        this.displayer?.get()?.displayLocationOverlay(STPhotoMapModels.LocationOverlay.ViewModel(photoId, title, time, description))
+    }
+
+    override fun presentRemoveLocationOverlay() {
+        this.displayer?.get()?.displayRemoveLocationOverlay()
     }
 }

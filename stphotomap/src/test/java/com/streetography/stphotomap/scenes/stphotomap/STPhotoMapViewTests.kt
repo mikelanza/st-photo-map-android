@@ -7,6 +7,7 @@ import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STEntityLevelViewSpy
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapBusinessLogicSpy
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapViewDelegateSpy
+import com.streetography.stphotomap.scenes.stphotomap.views.STLocationOverlayView
 import junit.framework.TestCase
 import org.junit.After
 import org.junit.Before
@@ -71,6 +72,18 @@ class STPhotoMapViewTests: TestCase() {
         this.sut.onCameraIdle()
         assertTrue("The interactor should determine location level when camera is on idle.", this.interactorSpy.shouldDetermineLocationLevelCalled)
     }
+
+    @Test
+    fun testShouldNavigateToPhotoDetailsWhenPhotoMapMarkerHandlerDidReselectPhoto() {
+        this.sut.photoMapMarkerHandlerDidReselectPhoto("photoId")
+        assertTrue(this.interactorSpy.shouldNavigateToPhotoDetailsCalled)
+    }
+
+    @Test
+    fun testShouldGetPhotoDetailsForPhotoMarkerWhenPhotoMapMarkerHandlerDidSelectPhoto() {
+        this.sut.photoMapMarkerHandlerDidSelectPhoto("photoId")
+        assertTrue(this.interactorSpy.shouldGetPhotoDetailsForPhotoMarkerCalled)
+    }
     //endregion
 
     //region Display logic tests
@@ -117,6 +130,57 @@ class STPhotoMapViewTests: TestCase() {
 
         this.sut.displayNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.ViewModel("photoId"))
         assertTrue(delegateSpy.photoMapViewNavigateToPhotoDetailsForPhotoIdCalled)
+    }
+
+    @Test
+    fun testDisplayLocationOverlayShouldShowLocationOverlayView() {
+        this.sut.locationOverlayView?.visibility = View.GONE
+
+        this.sut.displayLocationOverlay(STPhotoMapModels.LocationOverlay.ViewModel("photoId", "Title", "27 May, 2019", "Description"))
+
+        this.sut.post {
+            assertEquals(View.VISIBLE, this.sut.locationOverlayView?.visibility)
+        }
+    }
+
+    @Test
+    fun testDisplayLocationOverlayShouldUpdateLocationOverlayViewModel() {
+        this.sut.locationOverlayView?.model = STLocationOverlayView.Model("photoId", "Title", "27 May, 2019", "Description")
+
+        val photoId = "newPhotoId"
+        val title = "New title"
+        val time = "19 July, 2019"
+        val description = "New description"
+        this.sut.displayLocationOverlay(STPhotoMapModels.LocationOverlay.ViewModel(photoId, title, time, description))
+
+        this.sut.post {
+            assertEquals(photoId, this.sut.locationOverlayView?.model?.photoId)
+            assertEquals(title, this.sut.locationOverlayView?.model?.title)
+            assertEquals(time, this.sut.locationOverlayView?.model?.time)
+            assertEquals(description, this.sut.locationOverlayView?.model?.description)
+        }
+    }
+
+    @Test
+    fun testDisplayRemoveLocationOverlayShouldHideLocationOverlayView() {
+        this.sut.locationOverlayView?.visibility = View.VISIBLE
+
+        this.sut.displayRemoveLocationOverlay()
+
+        this.sut.post {
+            assertEquals(View.GONE, this.sut.locationOverlayView?.visibility)
+        }
+    }
+
+    @Test
+    fun testDisplayRemoveLocationOverlayShouldRemoveLocationOverlayModel() {
+        this.sut.locationOverlayView?.model = STLocationOverlayView.Model("photoId", "Title", "27 May, 2019", "Description")
+
+        this.sut.displayRemoveLocationOverlay()
+
+        this.sut.post {
+            assertNull(this.sut.locationOverlayView?.model)
+        }
     }
     //endregion
 

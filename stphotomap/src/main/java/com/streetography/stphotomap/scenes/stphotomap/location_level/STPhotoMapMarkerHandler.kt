@@ -20,7 +20,7 @@ class STPhotoMapMarkerHandler(private val context: Context, private val map: Goo
     var selectedPhotoMarker: PhotoMarker? = null
     var selectedCluster: Cluster<PhotoMarker>? = null
 
-    val delegate: STPhotoMapMarkerHandlerDelegate? = null
+    var delegate: STPhotoMapMarkerHandlerDelegate? = null
 
     init {
         this.setupClusterManager()
