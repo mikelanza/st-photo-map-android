@@ -29,6 +29,7 @@ class PhotoClusterView @JvmOverloads constructor(
 
     private var photoMarkers: ArrayList<PhotoMarker> = ArrayList()
     private var count: Int = 0
+    private var isClusterSelected: Boolean = false
 
     init {
         this.setupPaint()
@@ -40,8 +41,9 @@ class PhotoClusterView @JvmOverloads constructor(
         val elements = this.setupDrawingElements()
         val radius = this.transformDimension(elements.radius).toInt()
 
-        val width = resolveSizeAndState((radius * 4), widthMeasureSpec, 1)
-        val height = resolveSizeAndState((radius * 4), heightMeasureSpec, 0)
+        val multiplier = 4
+        val width = resolveSizeAndState((radius * multiplier), widthMeasureSpec, 1)
+        val height = resolveSizeAndState((radius * multiplier), heightMeasureSpec, 0)
         setMeasuredDimension(width, height)
     }
 
@@ -58,6 +60,11 @@ class PhotoClusterView @JvmOverloads constructor(
         this.count = markers.size
     }
 
+    fun setIsClusterSelected(isSelected: Boolean) {
+        this.isClusterSelected = isSelected
+    }
+
+    //region Paint configuration
     private fun setupPaint() {
         this.paint.color = Color.BLACK
         this.paint.strokeWidth = 2f
@@ -67,11 +74,17 @@ class PhotoClusterView @JvmOverloads constructor(
         this.paint.isDither = true
         this.paint.style = Paint.Style.STROKE
     }
+    //endregion
 
     //region Lines configuration
     fun addLines() {
         this.lines.clear()
         this.setupLines()
+        this.invalidate()
+    }
+
+    fun clearLines() {
+        this.lines.clear()
         this.invalidate()
     }
 
@@ -107,10 +120,15 @@ class PhotoClusterView @JvmOverloads constructor(
         this.setupTitleTextView()
     }
 
+    fun clearTitle() {
+        this.removeView(this.titleTextView)
+    }
+
     private fun setupTitleTextView() {
         this.titleTextView =
             ClusterTextView(this.context)
         this.titleTextView.text = this.count.toString()
+        this.titleTextView.setIsSelected(this.isClusterSelected)
 
         val width = this.transformDimension(this.titleTextView.titleWidth).toInt()
         val height = this.transformDimension(this.titleTextView.titleHeight).toInt()
@@ -170,6 +188,7 @@ class PhotoClusterView @JvmOverloads constructor(
     }
     //endregion
 
+    //region Drawing elements
     private fun setupDrawingElements(): Elements {
         val totalRadians = Math.toRadians(360.0)
         val deltaRadians: Double = totalRadians / this.count.toDouble()
@@ -191,4 +210,5 @@ class PhotoClusterView @JvmOverloads constructor(
     private class Elements(val startingRadians: Double, val deltaRadians: Double, val radius: Float)
 
     private class Line(val startX: Float, val startY: Float, val stopX: Float, val stopY: Float)
+    //endregion
 }

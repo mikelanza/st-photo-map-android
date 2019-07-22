@@ -22,14 +22,19 @@ import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarkerV
 class STPhotoClusterRenderer(private val context: Context, map: GoogleMap?, clusterManager: ClusterManager<PhotoMarker>?) :
     DefaultClusterRenderer<PhotoMarker>(context, map, clusterManager) {
 
-    private val markerView: PhotoMarkerView =
-        PhotoMarkerView(context, null)
-    private val clusterView: PhotoClusterView =
-        PhotoClusterView(context, null)
+    private val markerView: PhotoMarkerView = PhotoMarkerView(context, null)
+    private val clusterView: PhotoClusterView = PhotoClusterView(context, null)
+
+    var selectedCluster: Cluster<PhotoMarker>? = null
 
     fun updatePhotoMarker(photoMarker: PhotoMarker?) {
         val marker: Marker? = this.getMarker(photoMarker)
         this.onClusterItemRendered(photoMarker, marker)
+    }
+
+    fun updateCluster(cluster: Cluster<PhotoMarker>?) {
+        val marker = this.getMarker(cluster)
+        this.onClusterRendered(cluster, marker)
     }
 
     //region Cluster item logic
@@ -59,27 +64,49 @@ class STPhotoClusterRenderer(private val context: Context, map: GoogleMap?, clus
 
     //region Cluster logic
     override fun onBeforeClusterRendered(cluster: Cluster<PhotoMarker>?, markerOptions: MarkerOptions?) {
-        cluster?.let {
-            clusterView.setPhotoMarkers(ArrayList(it.items))
-            clusterView.clearImages()
-            markerOptions?.icon(BitmapDescriptorFactory.fromBitmap(makeClusterIcon()))?.anchor(0.5f, 1.0f)
-        }
+        clusterView.setPhotoMarkers(this.photoMarkersFromCluster(cluster))
+        clusterView.setIsClusterSelected(this.selectedCluster?.equals(cluster) ?: false)
+        clusterView.clearLines()
+        clusterView.clearTitle()
+        clusterView.clearImages()
+        markerOptions?.icon(BitmapDescriptorFactory.fromBitmap(makeClusterIcon()))?.anchor(0.5f, 1.0f)
     }
 
     override fun onClusterRendered(cluster: Cluster<PhotoMarker>?, marker: Marker?) {
-        cluster?.let {
-            clusterView.addLines()
-            clusterView.addTitle()
-            clusterView.addImages()
-
-            val markers = ArrayList(it.items)
-            for (i in 0 until markers.size) {
-                this.loadImage(markers[i].model.imageUrl, completion = { drawable ->
-                    clusterView.setImageResource(drawable, i)
-                    marker?.setIcon(BitmapDescriptorFactory.fromBitmap(makeClusterIcon()))
-                })
-            }
+        if (this.selectedCluster?.equals(cluster) == true) {
+            this.onSelectedClusterRenderer(cluster, marker)
+        } else {
+            this.onDeselectedClusterRenderer(cluster, marker)
         }
+    }
+
+    private fun onSelectedClusterRenderer(cluster: Cluster<PhotoMarker>?, marker: Marker?) {
+        clusterView.setIsClusterSelected(true)
+        clusterView.addLines()
+        clusterView.addTitle()
+        clusterView.addImages()
+
+        val markers = this.photoMarkersFromCluster(cluster)
+        for (i in 0 until markers.size) {
+            this.loadImage(markers[i].model.imageUrl, completion = { drawable ->
+                clusterView.setImageResource(drawable, i)
+                marker?.setIcon(BitmapDescriptorFactory.fromBitmap(makeClusterIcon()))
+            })
+        }
+    }
+
+    private fun onDeselectedClusterRenderer(cluster: Cluster<PhotoMarker>?, marker: Marker?) {
+        clusterView.setIsClusterSelected(false)
+        clusterView.clearLines()
+        clusterView.addTitle()
+        clusterView.clearImages()
+
+        marker?.setIcon(BitmapDescriptorFactory.fromBitmap(makeClusterIcon()))
+    }
+
+    private fun photoMarkersFromCluster(cluster: Cluster<PhotoMarker>?): ArrayList<PhotoMarker> {
+        cluster?.let { return ArrayList(it.items) }
+        return ArrayList()
     }
 
     private fun makeClusterIcon(): Bitmap {

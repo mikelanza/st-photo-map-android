@@ -1,7 +1,6 @@
 package com.streetography.stphotomap.scenes.stphotomap.location_level
 
 import android.content.Context
-import android.util.Log
 import com.google.android.gms.maps.GoogleMap
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
@@ -83,7 +82,15 @@ class STPhotoMapMarkerHandler(private val context: Context, private val map: Goo
     }
 
     override fun onClusterClick(p0: Cluster<PhotoMarker>?): Boolean {
-        Log.i("Marker handler", "onClusterClick size = " + p0?.size)
+        if (this.selectedCluster != null) {
+            this.clusterRenderer.selectedCluster = null
+            this.clusterRenderer.updateCluster(this.selectedCluster)
+        }
+
+        this.selectedCluster = p0
+        this.clusterRenderer.selectedCluster = p0
+        this.clusterRenderer.updateCluster(p0)
+
         return true
     }
 
