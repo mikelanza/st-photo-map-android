@@ -35,6 +35,7 @@ class STPhotoClusterRenderer(private val context: Context, map: GoogleMap?, clus
     //region Cluster item logic
     override fun onBeforeClusterItemRendered(item: PhotoMarker?, markerOptions: MarkerOptions?) {
         markerView.setImageResource(null)
+        markerView.setIsSelected(false)
         markerOptions?.icon(BitmapDescriptorFactory.fromBitmap(makeMarkerIcon()))?.anchor(0.5f, 1.0f)
     }
 
@@ -45,6 +46,7 @@ class STPhotoClusterRenderer(private val context: Context, map: GoogleMap?, clus
 
             this.loadImage(it.model.imageUrl, completion = { drawable ->
                 markerView.setImageResource(drawable)
+                markerView.setIsSelected(it.isSelected)
                 marker?.setIcon(BitmapDescriptorFactory.fromBitmap(makeMarkerIcon()))
             })
         }
