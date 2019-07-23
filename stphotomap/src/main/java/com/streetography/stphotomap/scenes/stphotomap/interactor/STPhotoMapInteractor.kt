@@ -27,6 +27,7 @@ interface STPhotoMapBusinessLogic {
     fun shouldDetermineLocationLevel()
     fun shouldNavigateToPhotoDetails(request: STPhotoMapModels.PhotoDetailsNavigation.Request)
     fun shouldGetPhotoDetailsForPhotoMarker(request: STPhotoMapModels.PhotoDetails.Request)
+    fun shouldZoomToCoordinate(request: STPhotoMapModels.CoordinateZoom.Request)
 }
 
 class STPhotoMapInteractor : STPhotoMapBusinessLogic,
@@ -87,6 +88,10 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
             this.presenter?.presentLoadingState()
             this.worker?.getPhotoDetailsForPhotoMarker(request.photoId)
         }
+    }
+
+    override fun shouldZoomToCoordinate(request: STPhotoMapModels.CoordinateZoom.Request) {
+        this.presenter?.presentZoomToCoordinate(STPhotoMapModels.CoordinateZoom.Response(request.coordinate))
     }
     //endregion
 

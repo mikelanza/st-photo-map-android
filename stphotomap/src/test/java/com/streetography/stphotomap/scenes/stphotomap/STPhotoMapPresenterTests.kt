@@ -1,5 +1,6 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
+import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.photo.STPhoto
 import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
@@ -85,5 +86,11 @@ class STPhotoMapPresenterTests: TestCase() {
     fun testPresentRemoveLocationOverlay() {
         this.sut.presentRemoveLocationOverlay()
         assertTrue(this.displayerSpy.displayRemoveLocationOverlayCalled)
+    }
+
+    @Test
+    fun testPresentZoomToCoordinate() {
+        this.sut.presentZoomToCoordinate(STPhotoMapModels.CoordinateZoom.Response(Coordinate(50.0, 50.0)))
+        assertTrue(this.displayerSpy.displayZoomToCoordinateCalled)
     }
 }

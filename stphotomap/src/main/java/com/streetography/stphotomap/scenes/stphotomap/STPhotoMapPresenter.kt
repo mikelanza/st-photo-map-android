@@ -17,6 +17,8 @@ interface STPhotoMapPresentationLogic {
 
     fun presentLocationOverlay(response: STPhotoMapModels.LocationOverlay.Response)
     fun presentRemoveLocationOverlay()
+
+    fun presentZoomToCoordinate(response: STPhotoMapModels.CoordinateZoom.Response)
 }
 
 class STPhotoMapPresenter: STPhotoMapPresentationLogic {
@@ -87,5 +89,9 @@ class STPhotoMapPresenter: STPhotoMapPresentationLogic {
 
     override fun presentRemoveLocationOverlay() {
         this.displayer?.get()?.displayRemoveLocationOverlay()
+    }
+
+    override fun presentZoomToCoordinate(response: STPhotoMapModels.CoordinateZoom.Response) {
+        this.displayer?.get()?.displayZoomToCoordinate(STPhotoMapModels.CoordinateZoom.ViewModel(response.coordinate))
     }
 }

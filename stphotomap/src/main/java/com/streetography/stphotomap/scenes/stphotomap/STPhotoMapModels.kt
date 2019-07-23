@@ -1,6 +1,7 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
 import com.google.android.gms.maps.model.LatLng
+import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.geojson.BoundingBox
 import com.streetography.stphotomap.models.photo.STPhoto
@@ -54,5 +55,11 @@ class STPhotoMapModels {
     class LocationOverlay {
         class Response(val photo: STPhoto)
         class ViewModel(val photoId: String, val title: String?, val time: String?, val description: String?)
+    }
+
+    class CoordinateZoom {
+        class Request(val coordinate: Coordinate)
+        class Response(val coordinate: Coordinate)
+        class ViewModel(val coordinate: Coordinate)
     }
 }

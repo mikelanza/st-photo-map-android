@@ -1,5 +1,6 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
+import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
 import com.streetography.stphotomap.scenes.stphotomap.cache.STPhotoMapGeojsonCache
@@ -508,5 +509,11 @@ class STPhotoMapInteractorTests: TestCase() {
         assertTrue(this.workerSpy.getPhotoDetailsForPhotoMarkerCalled)
         assertTrue(this.presenterSpy.presentNotLoadingStateCalled)
         assertFalse(this.presenterSpy.presentLocationOverlayCalled)
+    }
+
+    @Test
+    fun testShouldZoomToCoordinate() {
+        this.sut.shouldZoomToCoordinate(STPhotoMapModels.CoordinateZoom.Request(Coordinate(50.0, 50.0)))
+        assertTrue(this.presenterSpy.presentZoomToCoordinateCalled)
     }
 }

@@ -16,6 +16,7 @@ import com.streetography.stphotomap.R
 import com.streetography.stphotomap.extensions.google_map.visibleTiles
 import com.streetography.stphotomap.extensions.view.transformDimension
 import com.streetography.stphotomap.extensions.visible_region.boundingBox
+import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
@@ -45,6 +46,8 @@ interface STPhotoMapDisplayLogic {
 
     fun displayLocationOverlay(viewModel: STPhotoMapModels.LocationOverlay.ViewModel)
     fun displayRemoveLocationOverlay()
+
+    fun displayZoomToCoordinate(viewModel: STPhotoMapModels.CoordinateZoom.ViewModel)
 }
 
 public open class STPhotoMapView @JvmOverloads constructor(
@@ -308,6 +311,15 @@ public open class STPhotoMapView @JvmOverloads constructor(
             this.locationOverlayView?.model = null
         }
     }
+
+    override fun displayZoomToCoordinate(viewModel: STPhotoMapModels.CoordinateZoom.ViewModel) {
+        this.post {
+            this.mapView?.let {
+                val zoom = it.cameraPosition.zoom + 1F
+                it.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(viewModel.coordinate.latitude, viewModel.coordinate.longitude), zoom))
+            }
+        }
+    }
     //endregion
 
     //region Marker handler delegate
@@ -317,6 +329,14 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     override fun photoMapMarkerHandlerDidSelectPhoto(photoId: String) {
         this.interactor?.shouldGetPhotoDetailsForPhotoMarker(STPhotoMapModels.PhotoDetails.Request(photoId))
+    }
+
+    override fun photoMapMarkerHandlerZoomToCoordinate(coordinate: Coordinate) {
+        this.interactor?.shouldZoomToCoordinate(STPhotoMapModels.CoordinateZoom.Request(coordinate))
+    }
+
+    override fun photoMapMarkerHandlerNavigateToSpecificPhotos(photoIds: ArrayList<String>) {
+
     }
     //endregion
 }

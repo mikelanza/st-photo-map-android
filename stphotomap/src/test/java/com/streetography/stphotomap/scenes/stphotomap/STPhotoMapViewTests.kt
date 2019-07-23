@@ -3,6 +3,7 @@ package com.streetography.stphotomap.scenes.stphotomap
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import com.streetography.stphotomap.R
+import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STEntityLevelViewSpy
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapBusinessLogicSpy
@@ -83,6 +84,12 @@ class STPhotoMapViewTests: TestCase() {
     fun testShouldGetPhotoDetailsForPhotoMarkerWhenPhotoMapMarkerHandlerDidSelectPhoto() {
         this.sut.photoMapMarkerHandlerDidSelectPhoto("photoId")
         assertTrue(this.interactorSpy.shouldGetPhotoDetailsForPhotoMarkerCalled)
+    }
+
+    @Test
+    fun testShouldZoomToCoordinateForWhenPhotoMarker() {
+        this.sut.photoMapMarkerHandlerZoomToCoordinate(Coordinate(50.0, 50.0))
+        assertTrue(this.interactorSpy.shouldZoomToCoordinateCalled)
     }
     //endregion
 

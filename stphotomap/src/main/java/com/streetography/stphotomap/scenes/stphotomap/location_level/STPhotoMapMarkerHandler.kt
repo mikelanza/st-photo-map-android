@@ -4,11 +4,15 @@ import android.content.Context
 import com.google.android.gms.maps.GoogleMap
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
+import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarker
 
 interface STPhotoMapMarkerHandlerDelegate {
     fun photoMapMarkerHandlerDidReselectPhoto(photoId: String)
     fun photoMapMarkerHandlerDidSelectPhoto(photoId: String)
+
+    fun photoMapMarkerHandlerNavigateToSpecificPhotos(photoIds: ArrayList<String>)
+    fun photoMapMarkerHandlerZoomToCoordinate(coordinate: Coordinate)
 }
 
 class STPhotoMapMarkerHandler(private val context: Context, private val map: GoogleMap?): ClusterManager.OnClusterClickListener<PhotoMarker>, ClusterManager.OnClusterItemClickListener<PhotoMarker> {
@@ -82,16 +86,41 @@ class STPhotoMapMarkerHandler(private val context: Context, private val map: Goo
     }
 
     override fun onClusterClick(p0: Cluster<PhotoMarker>?): Boolean {
-        if (this.selectedCluster != null) {
-            this.clusterRenderer.selectedCluster = null
-            this.clusterRenderer.updateCluster(this.selectedCluster)
+        if (p0 == null) return false
+
+        val zoom = this.map?.cameraPosition?.zoom
+        val sameCoordinateForPhotoMarkers: Boolean = this.doPhotoMarkersHaveSameCoordinate(p0)
+
+        if (zoom == 20F && p0.size > 15) {
+            this.delegate?.photoMapMarkerHandlerNavigateToSpecificPhotos(this.photoIds(p0))
+        } else if (zoom == 20F || sameCoordinateForPhotoMarkers) {
+            if (this.selectedCluster != null) {
+                this.clusterRenderer.selectedCluster = null
+                this.clusterRenderer.updateCluster(this.selectedCluster)
+            }
+
+            this.selectedCluster = p0
+            this.clusterRenderer.selectedCluster = p0
+            this.clusterRenderer.updateCluster(p0)
+        } else {
+            this.delegate?.photoMapMarkerHandlerZoomToCoordinate(Coordinate.fromLatLng(p0.position))
         }
 
-        this.selectedCluster = p0
-        this.clusterRenderer.selectedCluster = p0
-        this.clusterRenderer.updateCluster(p0)
-
         return true
+    }
+
+    private fun doPhotoMarkersHaveSameCoordinate(cluster: Cluster<PhotoMarker>): Boolean {
+        val coordinate = cluster.items?.firstOrNull()?.model?.coordinate
+        cluster.items?.forEach {
+            if (it?.model?.coordinate?.equals(coordinate) == false) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun photoIds(cluster: Cluster<PhotoMarker>): ArrayList<String> {
+        return ArrayList(cluster.items?.mapNotNull { it?.model?.photoId }.orEmpty())
     }
 
     override fun onClusterItemClick(p0: PhotoMarker?): Boolean {

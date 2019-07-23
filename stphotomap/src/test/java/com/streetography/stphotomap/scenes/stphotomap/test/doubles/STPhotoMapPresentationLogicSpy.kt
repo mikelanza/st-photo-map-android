@@ -16,6 +16,8 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
     var presentLocationOverlayCalled: Boolean = false
     var presentRemoveLocationOverlayCalled: Boolean = false
 
+    var presentZoomToCoordinateCalled: Boolean = false
+
     override fun presentLoadingState() {
         this.presentLoadingStateCalled = true
     }
@@ -46,5 +48,9 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
 
     override fun presentRemoveLocationOverlay() {
         this.presentRemoveLocationOverlayCalled = true
+    }
+
+    override fun presentZoomToCoordinate(response: STPhotoMapModels.CoordinateZoom.Response) {
+        this.presentZoomToCoordinateCalled = true
     }
 }
