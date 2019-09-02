@@ -10,6 +10,7 @@ class STPhotoMapBusinessLogicSpy: STPhotoMapBusinessLogic {
     var shouldUpdateBoundingBoxCalled: Boolean = false
     var shouldDetermineLocationLevelCalled: Boolean = false
     var shouldNavigateToPhotoDetailsCalled: Boolean = false
+    var shouldNavigateToPhotoCollectionCalled: Boolean = false
     var shouldGetPhotoDetailsForPhotoMarkerCalled: Boolean = false
     var shouldZoomToCoordinateCalled: Boolean = false
 
@@ -35,6 +36,10 @@ class STPhotoMapBusinessLogicSpy: STPhotoMapBusinessLogic {
 
     override fun shouldNavigateToPhotoDetails(request: STPhotoMapModels.PhotoDetailsNavigation.Request) {
         this.shouldNavigateToPhotoDetailsCalled = true
+    }
+
+    override fun shouldNavigateToPhotoCollection(request: STPhotoMapModels.PhotoCollectionNavigation.Request) {
+        this.shouldNavigateToPhotoCollectionCalled = true;
     }
 
     override fun shouldGetPhotoDetailsForPhotoMarker(request: STPhotoMapModels.PhotoDetails.Request) {

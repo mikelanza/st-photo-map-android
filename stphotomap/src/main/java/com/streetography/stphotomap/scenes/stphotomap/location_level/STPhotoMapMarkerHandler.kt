@@ -51,6 +51,7 @@ class STPhotoMapMarkerHandler(private val context: Context, private val map: Goo
     fun removeAllMarkers() {
         this.markers.clear()
         this.clusterManager.clearItems()
+        this.clusterManager.cluster()
     }
 
     private fun addMarker(marker: PhotoMarker) {

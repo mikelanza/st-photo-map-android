@@ -2,8 +2,11 @@ package com.streetography.stphotomap.scenes.stphotomap
 
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
+import com.google.android.gms.maps.model.LatLng
 import com.streetography.stphotomap.R
 import com.streetography.stphotomap.models.coordinate.Coordinate
+import com.streetography.stphotomap.models.entity_level.EntityLevel
+import com.streetography.stphotomap.models.location.STLocation
 import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STEntityLevelViewSpy
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapBusinessLogicSpy
@@ -87,6 +90,12 @@ class STPhotoMapViewTests: TestCase() {
     }
 
     @Test
+    fun testShouldNavigateToPhotoCollectionWhenOnClickOnMap() {
+        this.sut.onMapClick(LatLng(50.0, 50.0))
+        assertTrue(this.interactorSpy.shouldNavigateToPhotoCollectionCalled)
+    }
+
+    @Test
     fun testShouldZoomToCoordinateForWhenPhotoMarker() {
         this.sut.photoMapMarkerHandlerZoomToCoordinate(Coordinate(50.0, 50.0))
         assertTrue(this.interactorSpy.shouldZoomToCoordinateCalled)
@@ -137,6 +146,15 @@ class STPhotoMapViewTests: TestCase() {
 
         this.sut.displayNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.ViewModel("photoId"))
         assertTrue(delegateSpy.photoMapViewNavigateToPhotoDetailsForPhotoIdCalled)
+    }
+
+    @Test
+    fun testDisplayNavigateToPhotoCollection() {
+        val delegateSpy = STPhotoMapViewDelegateSpy()
+        this.sut.delegate = delegateSpy
+
+        this.sut.displayNavigateToPhotoCollection(STPhotoMapModels.PhotoCollectionNavigation.ViewModel(STLocation(50.0, 50.0), EntityLevel.city, "userId", null))
+        assertTrue(delegateSpy.photoMapViewNavigateToPhotoCollectionCalled)
     }
 
     @Test

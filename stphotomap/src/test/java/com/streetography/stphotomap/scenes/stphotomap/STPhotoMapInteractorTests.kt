@@ -1,5 +1,6 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
+import com.google.android.gms.maps.model.LatLng
 import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
@@ -480,6 +481,20 @@ class STPhotoMapInteractorTests: TestCase() {
     fun testShouldNavigateToPhotoDetails() {
         this.sut.shouldNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Request("photoId"))
         assertTrue(this.presenterSpy.presentNavigateToPhotoDetailsCalled)
+    }
+
+    @Test
+    fun testShouldNavigateToPhotoCollectionWhenEntityLevelIsUnknownShouldNotAskThePresenterToPresentNavigateToPhotoCollection() {
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.unknown
+        this.sut.shouldNavigateToPhotoCollection(STPhotoMapModels.PhotoCollectionNavigation.Request(LatLng(50.0, 50.0)));
+        assertFalse(this.presenterSpy.presentNavigateToPhotoCollectionCalled)
+    }
+
+    @Test
+    fun testShouldNavigateToPhotoCollectionWhenEntityLevelIsNotUnknownShouldAskThePresenterToPresentNavigateToPhotoCollection() {
+        this.sut.entityLevelHandler.entityLevel = EntityLevel.city
+        this.sut.shouldNavigateToPhotoCollection(STPhotoMapModels.PhotoCollectionNavigation.Request(LatLng(50.0, 50.0)));
+        assertTrue(this.presenterSpy.presentNavigateToPhotoCollectionCalled)
     }
 
     @Test

@@ -14,6 +14,7 @@ interface STPhotoMapPresentationLogic {
     fun presentRemoveLocationMarkers()
 
     fun presentNavigateToPhotoDetails(response: STPhotoMapModels.PhotoDetailsNavigation.Response)
+    fun presentNavigateToPhotoCollection(response: STPhotoMapModels.PhotoCollectionNavigation.Response)
 
     fun presentLocationOverlay(response: STPhotoMapModels.LocationOverlay.Response)
     fun presentRemoveLocationOverlay()
@@ -77,6 +78,10 @@ class STPhotoMapPresenter: STPhotoMapPresentationLogic {
 
     override fun presentNavigateToPhotoDetails(response: STPhotoMapModels.PhotoDetailsNavigation.Response) {
         this.displayer?.get()?.displayNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.ViewModel(response.photoId))
+    }
+
+    override fun presentNavigateToPhotoCollection(response: STPhotoMapModels.PhotoCollectionNavigation.Response) {
+        this.displayer?.get()?.displayNavigateToPhotoCollection(STPhotoMapModels.PhotoCollectionNavigation.ViewModel(response.location, response.entityLevel, response.userId, response.collectionId))
     }
 
     override fun presentLocationOverlay(response: STPhotoMapModels.LocationOverlay.Response) {

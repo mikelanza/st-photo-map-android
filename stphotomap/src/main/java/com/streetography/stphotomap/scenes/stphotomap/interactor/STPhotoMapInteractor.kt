@@ -2,6 +2,7 @@ package com.streetography.stphotomap.scenes.stphotomap.interactor
 
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
+import com.streetography.stphotomap.models.location.STLocation
 import com.streetography.stphotomap.models.parameters.KeyValue
 import com.streetography.stphotomap.models.parameters.Parameters
 import com.streetography.stphotomap.models.photo.STPhoto
@@ -26,6 +27,7 @@ interface STPhotoMapBusinessLogic {
     fun shouldCacheGeojsonObjects()
     fun shouldDetermineLocationLevel()
     fun shouldNavigateToPhotoDetails(request: STPhotoMapModels.PhotoDetailsNavigation.Request)
+    fun shouldNavigateToPhotoCollection(request: STPhotoMapModels.PhotoCollectionNavigation.Request)
     fun shouldGetPhotoDetailsForPhotoMarker(request: STPhotoMapModels.PhotoDetails.Request)
     fun shouldZoomToCoordinate(request: STPhotoMapModels.CoordinateZoom.Request)
 }
@@ -81,6 +83,23 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
 
     override fun shouldNavigateToPhotoDetails(request: STPhotoMapModels.PhotoDetailsNavigation.Request) {
         this.presenter?.presentNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Response(request.photoId))
+    }
+
+    override fun shouldNavigateToPhotoCollection(request: STPhotoMapModels.PhotoCollectionNavigation.Request) {
+        if (this.entityLevelHandler.entityLevel == EntityLevel.unknown) { return }
+
+        val userId = STPhotoMapParametersHandler.instance.parameters.filter {
+            it.first == Parameters.Keys.userId
+        }.firstOrNull()?.second
+
+        val collectionId = STPhotoMapParametersHandler.instance.parameters.filter {
+            it.first == Parameters.Keys.collectionId
+        }.firstOrNull()?.second
+
+        request.latLng?.let {
+            this.presenter?.presentNavigateToPhotoCollection(STPhotoMapModels.PhotoCollectionNavigation.Response(
+                STLocation(it.latitude, it.longitude), this.entityLevelHandler.entityLevel, userId, collectionId));
+        }
     }
 
     override fun shouldGetPhotoDetailsForPhotoMarker(request: STPhotoMapModels.PhotoDetails.Request) {

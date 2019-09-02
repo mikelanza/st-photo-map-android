@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.geojson.BoundingBox
+import com.streetography.stphotomap.models.location.STLocation
 import com.streetography.stphotomap.models.photo.STPhoto
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.markers.photo.PhotoMarker
@@ -46,6 +47,12 @@ class STPhotoMapModels {
         class Request(val photoId: String)
         class Response(val photoId: String)
         class ViewModel(val photoId: String)
+    }
+
+    class PhotoCollectionNavigation {
+        class Request(val latLng: LatLng?)
+        class Response(val location: STLocation, val entityLevel: EntityLevel, val userId: String?, val collectionId: String?)
+        class ViewModel(val location: STLocation, val entityLevel: EntityLevel, val userId: String?, val collectionId: String?)
     }
 
     class PhotoDetails {

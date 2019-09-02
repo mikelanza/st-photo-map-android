@@ -17,6 +17,8 @@ import com.streetography.stphotomap.extensions.google_map.visibleTiles
 import com.streetography.stphotomap.extensions.view.transformDimension
 import com.streetography.stphotomap.extensions.visible_region.boundingBox
 import com.streetography.stphotomap.models.coordinate.Coordinate
+import com.streetography.stphotomap.models.entity_level.EntityLevel
+import com.streetography.stphotomap.models.location.STLocation
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
 import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
@@ -32,6 +34,7 @@ import java.net.URL
 interface STPhotoMapViewDelegate {
     fun photoMapViewOnMapReady(googleMap: GoogleMap)
     fun photoMapViewNavigateToPhotoDetails(photoId: String)
+    fun photoMapViewNavigateToPhotoCollection(location: STLocation, entityLevel: EntityLevel, userId: String?, collectionId: String?)
 }
 
 interface STPhotoMapDisplayLogic {
@@ -43,6 +46,7 @@ interface STPhotoMapDisplayLogic {
     fun displayRemoveLocationMarkers()
 
     fun displayNavigateToPhotoDetails(viewModel: STPhotoMapModels.PhotoDetailsNavigation.ViewModel)
+    fun displayNavigateToPhotoCollection(viewModel: STPhotoMapModels.PhotoCollectionNavigation.ViewModel)
 
     fun displayLocationOverlay(viewModel: STPhotoMapModels.LocationOverlay.ViewModel)
     fun displayRemoveLocationOverlay()
@@ -52,7 +56,7 @@ interface STPhotoMapDisplayLogic {
 
 public open class STPhotoMapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr),
-    STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener,
+    STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener,
     STPhotoMapMarkerHandlerDelegate {
     var interactor: STPhotoMapBusinessLogic? = null
 
@@ -112,6 +116,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
     private fun setupMapViewListeners() {
         this.mapView?.setOnCameraIdleListener(this)
         this.mapView?.setOnCameraMoveListener(this)
+        this.mapView?.setOnMapClickListener(this)
     }
 
     private fun setupProgressBar() {
@@ -122,7 +127,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.progressBar?.visibility = View.GONE
         this.progressBar?.isIndeterminate = false
         val drawable = this.progressBar?.progressDrawable?.mutate()
-        drawable?.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN)
+        drawable?.setColorFilter(Color.argb(100, 65, 171, 255), PorterDuff.Mode.SRC)
         this.progressBar?.progressDrawable = drawable
     }
 
@@ -197,6 +202,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     override fun onCameraMove() {
         this.interactor?.shouldUpdateBoundingBox(STPhotoMapModels.UpdateBoundingBox.Request(this.mapView?.projection?.visibleRegion?.boundingBox()))
+    }
+
+    override fun onMapClick(latLng: LatLng?) {
+        this.interactor?.shouldNavigateToPhotoCollection(STPhotoMapModels.PhotoCollectionNavigation.Request(latLng));
     }
     //endregion
 
@@ -298,6 +307,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.delegate?.photoMapViewNavigateToPhotoDetails(viewModel.photoId)
     }
 
+    override fun displayNavigateToPhotoCollection(viewModel: STPhotoMapModels.PhotoCollectionNavigation.ViewModel) {
+        this.delegate?.photoMapViewNavigateToPhotoCollection(viewModel.location, viewModel.entityLevel, viewModel.userId, viewModel.collectionId);
+    }
+
     override fun displayLocationOverlay(viewModel: STPhotoMapModels.LocationOverlay.ViewModel) {
         this.post {
             this.locationOverlayView?.model = STLocationOverlayView.Model(viewModel.photoId, viewModel.title, viewModel.time, viewModel.description)
@@ -328,7 +341,8 @@ public open class STPhotoMapView @JvmOverloads constructor(
     }
 
     override fun photoMapMarkerHandlerDidSelectPhoto(photoId: String) {
-        this.interactor?.shouldGetPhotoDetailsForPhotoMarker(STPhotoMapModels.PhotoDetails.Request(photoId))
+//        this.interactor?.shouldGetPhotoDetailsForPhotoMarker(STPhotoMapModels.PhotoDetails.Request(photoId))
+        this.interactor?.shouldNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Request(photoId))
     }
 
     override fun photoMapMarkerHandlerZoomToCoordinate(coordinate: Coordinate) {

@@ -13,6 +13,7 @@ class STPhotoMapDisplayLogicSpy: STPhotoMapDisplayLogic {
     var displayRemoveLocationMarkersCalled: Boolean = false
 
     var displayNavigateToPhotoDetailsCalled: Boolean = false
+    var displayNavigateToPhotoCollectionCalled: Boolean = false
 
     var displayLocationOverlayCalled: Boolean = false
     var displayRemoveLocationOverlayCalled: Boolean = false
@@ -41,6 +42,10 @@ class STPhotoMapDisplayLogicSpy: STPhotoMapDisplayLogic {
 
     override fun displayNavigateToPhotoDetails(viewModel: STPhotoMapModels.PhotoDetailsNavigation.ViewModel) {
         this.displayNavigateToPhotoDetailsCalled = true
+    }
+
+    override fun displayNavigateToPhotoCollection(viewModel: STPhotoMapModels.PhotoCollectionNavigation.ViewModel) {
+        this.displayNavigateToPhotoCollectionCalled = true;
     }
 
     override fun displayLocationOverlay(viewModel: STPhotoMapModels.LocationOverlay.ViewModel) {

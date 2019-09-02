@@ -2,6 +2,7 @@ package com.streetography.stphotomap.scenes.stphotomap
 
 import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
+import com.streetography.stphotomap.models.location.STLocation
 import com.streetography.stphotomap.models.photo.STPhoto
 import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapDisplayLogicSpy
@@ -74,6 +75,12 @@ class STPhotoMapPresenterTests: TestCase() {
     fun testPresentNavigateToPhotoDetails() {
         this.sut.presentNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Response("photoId"))
         assertTrue(this.displayerSpy.displayNavigateToPhotoDetailsCalled)
+    }
+
+    @Test
+    fun testPresentNavigateToPhotoCollection() {
+        this.sut.presentNavigateToPhotoCollection(STPhotoMapModels.PhotoCollectionNavigation.Response(STLocation(50.0, 50.0), EntityLevel.city, "userId", null))
+        assertTrue(this.displayerSpy.displayNavigateToPhotoCollectionCalled)
     }
 
     @Test
