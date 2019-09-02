@@ -39,8 +39,12 @@ class GetGeojsonTileOperation(
                 val jsonData = response.body()?.string()
                 try {
                     val jsonObject = JSONObject(jsonData)
-                    val geoJSONObject = GeoJSON().parse(jsonObject)
-                    shouldCompleteOperationWithSuccess(geoJSONObject)
+
+                    GeoJSON().parse(jsonObject)?.let {
+                        shouldCompleteOperationWithSuccess(it)
+                    }
+
+                    shouldCompleteOperationWithFailure(OperationError.CANNOT_PARSE_RESPONSE)
                 } catch (error: JSONException) {
                     shouldCompleteOperationWithFailure(OperationError.CANNOT_PARSE_RESPONSE)
                 }
