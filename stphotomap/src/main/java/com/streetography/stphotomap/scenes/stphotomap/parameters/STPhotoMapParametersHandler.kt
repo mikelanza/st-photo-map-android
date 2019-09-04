@@ -30,6 +30,8 @@ class STPhotoMapParametersHandler {
         this.parameters.removeAll {
             it.first == parameter.first
         }
-        this.parameters.add(parameter)
+        parameter.second.let {
+            this.parameters.add(parameter)
+        }
     }
 }
