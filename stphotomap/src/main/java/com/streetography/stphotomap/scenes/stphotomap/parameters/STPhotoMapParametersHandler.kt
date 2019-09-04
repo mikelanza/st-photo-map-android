@@ -5,7 +5,7 @@ import com.streetography.stphotomap.models.parameters.Parameters
 import java.util.*
 
 class STPhotoMapParametersHandler {
-    val parameters: ArrayList<KeyValue>
+    var parameters: ArrayList<KeyValue>
 
     companion object {
         val instance = STPhotoMapParametersHandler()
@@ -30,8 +30,24 @@ class STPhotoMapParametersHandler {
         this.parameters.removeAll {
             it.first == parameter.first
         }
-        parameter.second.let {
-            this.parameters.add(parameter)
+        this.parameters.add(parameter)
+    }
+
+    fun remove(parameter: KeyValue) {
+        this.parameters.removeAll {
+            it.first == parameter.first
         }
+    }
+
+    fun reset() {
+        this.parameters = this.defaultParameters()
+    }
+
+    fun userId(): String? {
+        return this.parameters.firstOrNull { it.first == Parameters.Keys.userId }?.second
+    }
+
+    fun collectionId(): String? {
+        return this.parameters.firstOrNull { it.first == Parameters.Keys.collectionId }?.second
     }
 }
