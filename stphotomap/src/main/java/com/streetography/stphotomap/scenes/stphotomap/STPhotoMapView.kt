@@ -69,10 +69,16 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     public var delegate: STPhotoMapViewDelegate? = null
 
+    private var tileOverlay: TileOverlay? = null
+
     init {
         this.setup()
         this.setupSubviews()
         this.addSubviews()
+    }
+
+    fun clearTileCache() {
+        this.tileOverlay?.clearTileCache()
     }
 
     private fun setup() {
@@ -184,7 +190,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
     //region Google map interfaces
     override fun onMapReady(googleMap: GoogleMap) {
         this.mapView = googleMap
-        this.mapView?.addTileOverlay(getTileOverlayOptions())
+        tileOverlay = this.mapView?.addTileOverlay(getTileOverlayOptions())
 
         this.setupGoogleMapStyle()
         this.setupMapViewListeners()
