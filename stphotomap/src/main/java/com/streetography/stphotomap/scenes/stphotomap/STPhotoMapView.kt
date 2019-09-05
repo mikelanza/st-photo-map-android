@@ -6,11 +6,15 @@ import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.TileOverlay
+import com.google.android.gms.maps.model.TileOverlayOptions
 import com.streetography.stphotomap.R
 import com.streetography.stphotomap.extensions.google_map.visibleTiles
 import com.streetography.stphotomap.extensions.view.transformDimension
@@ -19,7 +23,6 @@ import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.location.STLocation
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
-import com.streetography.stphotomap.scenes.stphotomap.builders.STPhotoMapUriBuilder
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import com.streetography.stphotomap.scenes.stphotomap.location_level.STPhotoMapMarkerHandler
@@ -29,9 +32,6 @@ import com.streetography.stphotomap.scenes.stphotomap.tiles.STPhotoUrlTileProvid
 import com.streetography.stphotomap.scenes.stphotomap.views.STEntityLevelView
 import com.streetography.stphotomap.scenes.stphotomap.views.STLocationOverlayView
 import java.lang.ref.WeakReference
-import java.net.MalformedURLException
-import java.net.URL
-
 
 interface STPhotoMapViewDelegate {
     fun photoMapViewOnMapReady(googleMap: GoogleMap)
@@ -135,7 +135,7 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.progressBar?.visibility = View.GONE
         this.progressBar?.isIndeterminate = false
         val drawable = this.progressBar?.progressDrawable?.mutate()
-        drawable?.setColorFilter(Color.argb(100, 65, 171, 255), PorterDuff.Mode.SRC)
+        drawable?.setColorFilter(Color.argb(255, 65, 171, 255), PorterDuff.Mode.SRC_IN)
         this.progressBar?.progressDrawable = drawable
     }
 
@@ -161,7 +161,9 @@ public open class STPhotoMapView @JvmOverloads constructor(
     }
 
     private fun addProgressBar() {
-        val layoutParameters = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        val height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, resources.displayMetrics)
+        val layoutParameters = LayoutParams(LayoutParams.MATCH_PARENT, height.toInt())
+
         layoutParameters.addRule(ALIGN_PARENT_TOP)
         this.addView(this.progressBar, layoutParameters)
     }
