@@ -22,6 +22,7 @@ class STPhotoMapParametersHandler {
             KeyValue(Parameters.Keys.sort, "popular"),
             KeyValue(Parameters.Keys.tileSize, "256"),
             KeyValue(Parameters.Keys.pinOptimize, "4"),
+            KeyValue(Parameters.Keys.client, "Android"),
             KeyValue(Parameters.Keys.sessionId,  UUID.randomUUID().toString())
         )
     }

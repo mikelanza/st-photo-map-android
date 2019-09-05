@@ -14,6 +14,7 @@ public class Parameters {
             public val bbox = "bbox"
             public val userId = "userId"
             public val collectionId = "collectionId"
+            public val client = "client"
         }
     }
 }

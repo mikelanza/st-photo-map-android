@@ -6,7 +6,6 @@ import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
@@ -25,11 +24,14 @@ import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusin
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import com.streetography.stphotomap.scenes.stphotomap.location_level.STPhotoMapMarkerHandler
 import com.streetography.stphotomap.scenes.stphotomap.location_level.STPhotoMapMarkerHandlerDelegate
+import com.streetography.stphotomap.scenes.stphotomap.tiles.STPhotoTileProvider
+import com.streetography.stphotomap.scenes.stphotomap.tiles.STPhotoUrlTileProvider
 import com.streetography.stphotomap.scenes.stphotomap.views.STEntityLevelView
 import com.streetography.stphotomap.scenes.stphotomap.views.STLocationOverlayView
 import java.lang.ref.WeakReference
 import java.net.MalformedURLException
 import java.net.URL
+
 
 interface STPhotoMapViewDelegate {
     fun photoMapViewOnMapReady(googleMap: GoogleMap)
@@ -217,21 +219,11 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     //region Tile overlay & provider
     private fun getTileOverlayOptions(): TileOverlayOptions {
-        return TileOverlayOptions().tileProvider(getTileProvider()).transparency(0.0f)
-    }
-
-    private fun getTileProvider(): TileProvider {
-        return object : UrlTileProvider(512, 512) {
-            override fun getTileUrl(x: Int, y: Int, zoom: Int): URL {
-                val uri = STPhotoMapUriBuilder().jpegTileUri(TileCoordinate(zoom, x, y)).second
-                Log.i("STPhotoMapView", String.format("x=%d, y=%d z=%d", x, y, zoom));
-                try {
-                    return URL(uri)
-                } catch (e: MalformedURLException) {
-                    throw AssertionError(e)
-                }
-            }
-        }
+        val tileProvider = STPhotoTileProvider(STPhotoUrlTileProvider(256, 256))
+        val options = TileOverlayOptions()
+        options.tileProvider(tileProvider)
+        options.transparency(0.0.toFloat())
+        return options
     }
     //endregion
 
