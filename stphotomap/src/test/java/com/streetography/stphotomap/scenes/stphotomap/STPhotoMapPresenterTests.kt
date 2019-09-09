@@ -100,4 +100,34 @@ class STPhotoMapPresenterTests: TestCase() {
         this.sut.presentZoomToCoordinate(STPhotoMapModels.CoordinateZoom.Response(Coordinate(50.0, 50.0)))
         assertTrue(this.displayerSpy.displayZoomToCoordinateCalled)
     }
+
+    @Test
+    fun testPresentCenterToCoordinateShouldAskTheDisplayerToDisplayCenterToCoordinate() {
+        this.sut.presentCenterToCoordinate(STPhotoMapModels.CoordinateCenter.Response(Coordinate(50.0, 50.0), EntityLevel.block))
+        assertTrue(this.displayerSpy.displayCenterToCoordinateCalled)
+    }
+
+    @Test
+    fun testPresentRequestLocationPermissionsShouldAskTheDisplayerToDisplayRequestLocationPermissions() {
+        this.sut.presentRequestLocationPermissions()
+        assertTrue(this.displayerSpy.displayRequestLocationPermissionsCalled)
+    }
+
+    @Test
+    fun testPresentLocationAccessDeniedAlertShouldAskTheDisplayerToDisplayLocationAccessDeniedAlert() {
+        this.sut.presentLocationAccessDeniedAlert()
+        assertTrue(this.displayerSpy.displayLocationAccessDeniedAlertCalled)
+    }
+
+    @Test
+    fun testPresentOpenDataSourcesLinkShouldAskTheDisplayerToDisplayStartIntent() {
+        this.sut.presentOpenDataSourcesLink()
+        assertTrue(this.displayerSpy.displayStartIntentCalled)
+    }
+
+    @Test
+    fun testPresentOpenSettingsApplicationShouldAskTheDisplayerToDisplayStartIntent() {
+        this.sut.presentOpenSettingsApplication()
+        assertTrue(this.displayerSpy.displayStartIntentCalled)
+    }
 }

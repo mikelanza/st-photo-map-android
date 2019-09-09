@@ -1,5 +1,8 @@
 package com.streetography.stphotomap.scenes.stphotomap.interactor
 
+import android.content.Context
+import android.content.pm.PackageManager
+import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
 import com.streetography.stphotomap.models.location.STLocation
@@ -19,6 +22,8 @@ import com.streetography.stphotomap.scenes.stphotomap.entity_level.STPhotoMapEnt
 import com.streetography.stphotomap.scenes.stphotomap.entity_level.STPhotoMapEntityLevelHandlerDelegate
 import com.streetography.stphotomap.scenes.stphotomap.location_level.STPhotoMapLocationLevelHandler
 import com.streetography.stphotomap.scenes.stphotomap.parameters.STPhotoMapParametersHandler
+import com.streetography.stphotomap.scenes.stphotomap.user_location.STPhotoMapUserLocationHandler
+import com.streetography.stphotomap.scenes.stphotomap.user_location.STPhotoMapUserLocationHandlerDelegate
 
 interface STPhotoMapBusinessLogic {
     fun shouldUpdateVisibleTiles(request: STPhotoMapModels.VisibleTiles.Request)
@@ -30,10 +35,15 @@ interface STPhotoMapBusinessLogic {
     fun shouldNavigateToPhotoCollection(request: STPhotoMapModels.PhotoCollectionNavigation.Request)
     fun shouldGetPhotoDetailsForPhotoMarker(request: STPhotoMapModels.PhotoDetails.Request)
     fun shouldZoomToCoordinate(request: STPhotoMapModels.CoordinateZoom.Request)
+    fun shouldAskForLocationPermissions()
+    fun shouldRequestUserLocation()
+
+    fun shouldOpenDataSourcesLink()
+    fun shouldOpenSettingsApplication()
 }
 
-class STPhotoMapInteractor : STPhotoMapBusinessLogic,
-    STPhotoMapWorkerDelegate, STPhotoMapEntityLevelHandlerDelegate {
+class STPhotoMapInteractor(context: Context): STPhotoMapBusinessLogic,
+    STPhotoMapWorkerDelegate, STPhotoMapEntityLevelHandlerDelegate, STPhotoMapUserLocationHandlerDelegate {
     var worker: STPhotoMapWorker? = STPhotoMapWorker(this)
     var presenter: STPhotoMapPresentationLogic? = null
 
@@ -41,12 +51,14 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
     var cacheHandler: STPhotoMapGeojsonCacheHandler
     var entityLevelHandler: STPhotoMapEntityLevelHandler
     var locationLevelHandler: STPhotoMapLocationLevelHandler
+    var userLocationHandler: STPhotoMapUserLocationHandler?
 
     init {
         this.visibleTiles = ArrayList()
         this.cacheHandler = STPhotoMapGeojsonCacheHandler()
         this.entityLevelHandler = STPhotoMapEntityLevelHandler(this)
         this.locationLevelHandler = STPhotoMapLocationLevelHandler()
+        this.userLocationHandler = STPhotoMapUserLocationHandler(context, this)
     }
 
     //region Business logic
@@ -219,6 +231,45 @@ class STPhotoMapInteractor : STPhotoMapBusinessLogic,
         if (this.isLocationLevel()) {
             this.presenter?.presentLocationOverlay(STPhotoMapModels.LocationOverlay.Response(photo))
         }
+    }
+    //endregion
+
+    //region Current user location
+    override fun shouldAskForLocationPermissions() {
+        when (this.userLocationHandler?.locationPermissionStatus) {
+            PackageManager.PERMISSION_GRANTED -> return this.handleGrantedLocationPermissions()
+            PackageManager.PERMISSION_DENIED -> return this.handleNotDeterminedLocationPermissions()
+            else -> return this.handleNotDeterminedLocationPermissions()
+        }
+    }
+
+    private fun handleGrantedLocationPermissions() {
+        this.userLocationHandler?.requestUserLocation()
+    }
+
+    private fun handleNotDeterminedLocationPermissions() {
+        this.presenter?.presentRequestLocationPermissions()
+    }
+
+    override fun userLocationHandler(
+        handler: STPhotoMapUserLocationHandler?,
+        centerToCoordinate: Coordinate
+    ) {
+        this.presenter?.presentCenterToCoordinate(STPhotoMapModels.CoordinateCenter.Response(centerToCoordinate, EntityLevel.block))
+    }
+
+    override fun shouldRequestUserLocation() {
+        this.userLocationHandler?.requestUserLocation()
+    }
+    //endregion
+
+    //region Open applications
+    override fun shouldOpenDataSourcesLink() {
+        this.presenter?.presentOpenDataSourcesLink()
+    }
+
+    override fun shouldOpenSettingsApplication() {
+        this.presenter?.presentOpenSettingsApplication()
     }
     //endregion
 }

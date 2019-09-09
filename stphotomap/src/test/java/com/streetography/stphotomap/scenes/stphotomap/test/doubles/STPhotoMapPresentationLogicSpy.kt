@@ -18,6 +18,13 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
     var presentRemoveLocationOverlayCalled: Boolean = false
 
     var presentZoomToCoordinateCalled: Boolean = false
+    var presentCenterToCoordinateCalled: Boolean = false
+
+    var presentRequestLocationPermissionsCalled: Boolean = false
+    var presentLocationAccessDeniedAlertCalled: Boolean = false
+
+    var presentOpenDataSourcesLinkCalled: Boolean = false
+    var presentOpenSettingsApplicationCalled: Boolean = false
 
     override fun presentLoadingState() {
         this.presentLoadingStateCalled = true
@@ -57,5 +64,25 @@ class STPhotoMapPresentationLogicSpy: STPhotoMapPresentationLogic {
 
     override fun presentZoomToCoordinate(response: STPhotoMapModels.CoordinateZoom.Response) {
         this.presentZoomToCoordinateCalled = true
+    }
+
+    override fun presentCenterToCoordinate(response: STPhotoMapModels.CoordinateCenter.Response) {
+        this.presentCenterToCoordinateCalled = true
+    }
+
+    override fun presentRequestLocationPermissions() {
+        this.presentRequestLocationPermissionsCalled = true
+    }
+
+    override fun presentLocationAccessDeniedAlert() {
+        this.presentLocationAccessDeniedAlertCalled = true
+    }
+
+    override fun presentOpenDataSourcesLink() {
+        this.presentOpenDataSourcesLinkCalled = true
+    }
+
+    override fun presentOpenSettingsApplication() {
+        this.presentOpenSettingsApplicationCalled = true
     }
 }

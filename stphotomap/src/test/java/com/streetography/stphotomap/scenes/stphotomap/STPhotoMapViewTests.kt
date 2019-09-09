@@ -100,6 +100,24 @@ class STPhotoMapViewTests: TestCase() {
         this.sut.photoMapMarkerHandlerZoomToCoordinate(Coordinate(50.0, 50.0))
         assertTrue(this.interactorSpy.shouldZoomToCoordinateCalled)
     }
+
+    @Test
+    fun testShouldAskForLocationPermissionsWhenUserDidClickUserLocationButton() {
+        this.sut.didClickUserLocationButton()
+        assertTrue(this.interactorSpy.shouldAskForLocationPermissionsCalled)
+    }
+
+    @Test
+    fun testRequestUserLocationShouldAskTheInteractorToRequestUserLocation() {
+        this.sut.requestUserLocation()
+        assertTrue(this.interactorSpy.shouldRequestUserLocationCalled)
+    }
+
+    @Test
+    fun testShouldOpenDataSourcesLinkWhenUserDidClickDataSourcesButton() {
+        this.sut.didClickDataSourcesButton()
+        assertTrue(this.interactorSpy.shouldOpenDataSourcesLinkCalled)
+    }
     //endregion
 
     //region Display logic tests
