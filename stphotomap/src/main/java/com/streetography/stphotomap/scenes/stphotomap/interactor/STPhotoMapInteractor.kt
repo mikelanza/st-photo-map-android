@@ -46,6 +46,7 @@ class STPhotoMapInteractor(context: Context): STPhotoMapBusinessLogic,
     STPhotoMapWorkerDelegate, STPhotoMapEntityLevelHandlerDelegate, STPhotoMapUserLocationHandlerDelegate {
     var worker: STPhotoMapWorker? = STPhotoMapWorker(this)
     var presenter: STPhotoMapPresentationLogic? = null
+    var context: Context? = null
 
     var visibleTiles: ArrayList<TileCoordinate>
     var cacheHandler: STPhotoMapGeojsonCacheHandler
@@ -54,6 +55,7 @@ class STPhotoMapInteractor(context: Context): STPhotoMapBusinessLogic,
     var userLocationHandler: STPhotoMapUserLocationHandler?
 
     init {
+        this.context = context
         this.visibleTiles = ArrayList()
         this.cacheHandler = STPhotoMapGeojsonCacheHandler()
         this.entityLevelHandler = STPhotoMapEntityLevelHandler(this)
