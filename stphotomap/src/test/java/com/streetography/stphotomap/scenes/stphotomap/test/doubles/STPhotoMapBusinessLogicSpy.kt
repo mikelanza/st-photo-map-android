@@ -13,6 +13,11 @@ class STPhotoMapBusinessLogicSpy: STPhotoMapBusinessLogic {
     var shouldNavigateToPhotoCollectionCalled: Boolean = false
     var shouldGetPhotoDetailsForPhotoMarkerCalled: Boolean = false
     var shouldZoomToCoordinateCalled: Boolean = false
+    var shouldAskForLocationPermissionsCalled: Boolean = false
+    var shouldRequestUserLocationCalled: Boolean = false
+
+    var shouldOpenDataSourcesLinkCalled: Boolean = false
+    var shouldOpenSettingsApplicationCalled: Boolean = false
 
     override fun shouldUpdateVisibleTiles(request: STPhotoMapModels.VisibleTiles.Request) {
         this.shouldUpdateVisibleTilesCalled = true
@@ -48,5 +53,21 @@ class STPhotoMapBusinessLogicSpy: STPhotoMapBusinessLogic {
 
     override fun shouldZoomToCoordinate(request: STPhotoMapModels.CoordinateZoom.Request) {
         this.shouldZoomToCoordinateCalled = true
+    }
+
+    override fun shouldAskForLocationPermissions() {
+        this.shouldAskForLocationPermissionsCalled = true
+    }
+
+    override fun shouldRequestUserLocation() {
+        this.shouldRequestUserLocationCalled = true
+    }
+
+    override fun shouldOpenDataSourcesLink() {
+        this.shouldOpenDataSourcesLinkCalled = true
+    }
+
+    override fun shouldOpenSettingsApplication() {
+        this.shouldOpenSettingsApplicationCalled = true
     }
 }

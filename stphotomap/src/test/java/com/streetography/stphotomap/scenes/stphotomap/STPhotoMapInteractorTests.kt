@@ -1,5 +1,7 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
+import android.content.pm.PackageManager
+import androidx.test.core.app.ApplicationProvider
 import com.google.android.gms.maps.model.LatLng
 import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
@@ -8,6 +10,7 @@ import com.streetography.stphotomap.scenes.stphotomap.cache.STPhotoMapGeojsonCac
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapPresentationLogicSpy
+import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapUserLocationHandlerSpy
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapWorkerSpy
 import junit.framework.TestCase
 import org.junit.After
@@ -22,17 +25,20 @@ class STPhotoMapInteractorTests: TestCase() {
     lateinit var sut: STPhotoMapInteractor
     lateinit var workerSpy: STPhotoMapWorkerSpy
     lateinit var presenterSpy: STPhotoMapPresentationLogicSpy
+    lateinit var userLocationHandlerSpy: STPhotoMapUserLocationHandlerSpy
 
     val workerDelay: Long = 100
 
     private fun setupSubjectUnderTest() {
-        this.sut = STPhotoMapInteractor()
+        this.sut = STPhotoMapInteractor(ApplicationProvider.getApplicationContext())
 
         this.presenterSpy = STPhotoMapPresentationLogicSpy()
         this.workerSpy = STPhotoMapWorkerSpy(this.sut)
+        this.userLocationHandlerSpy = STPhotoMapUserLocationHandlerSpy(ApplicationProvider.getApplicationContext(), this.sut)
 
         this.sut.presenter = this.presenterSpy
         this.sut.worker = this.workerSpy
+        this.sut.userLocationHandler = this.userLocationHandlerSpy
     }
 
     @Before
@@ -530,5 +536,52 @@ class STPhotoMapInteractorTests: TestCase() {
     fun testShouldZoomToCoordinate() {
         this.sut.shouldZoomToCoordinate(STPhotoMapModels.CoordinateZoom.Request(Coordinate(50.0, 50.0)))
         assertTrue(this.presenterSpy.presentZoomToCoordinateCalled)
+    }
+
+    //region User location
+    @Test
+    fun testShouldAskForLocationPermissionsWhenPermissionsAreGranted() {
+        this.userLocationHandlerSpy.permissionStatus = PackageManager.PERMISSION_GRANTED
+        this.sut.shouldAskForLocationPermissions()
+        assertTrue(this.userLocationHandlerSpy.requestUserLocationCalled)
+    }
+
+    @Test
+    fun testShouldAskForLocationPermissionsWhenPermissionsAreNotDetermined() {
+        this.userLocationHandlerSpy.permissionStatus = 3
+        this.sut.shouldAskForLocationPermissions()
+        assertTrue(this.presenterSpy.presentRequestLocationPermissionsCalled)
+    }
+
+    @Test
+    fun testShouldAskForLocationPermissionsWhenPermissionsAreDenied() {
+        this.userLocationHandlerSpy.permissionStatus = PackageManager.PERMISSION_DENIED
+        this.sut.shouldAskForLocationPermissions()
+        assertTrue(this.presenterSpy.presentRequestLocationPermissionsCalled)
+    }
+
+    @Test
+    fun testUserLocationHandlerCenterToCoordinateShouldAskThePresenterToPresentCenterToCoordinate() {
+        this.sut.userLocationHandler(this.userLocationHandlerSpy, Coordinate(40.0, 40.0))
+        assertTrue(this.presenterSpy.presentCenterToCoordinateCalled)
+    }
+
+    @Test
+    fun testShouldRequestUserLocation() {
+        this.sut.shouldRequestUserLocation()
+        assertTrue(this.userLocationHandlerSpy.requestUserLocationCalled)
+    }
+    //endregion
+
+    @Test
+    fun testShouldOpenDataSourcesLinkShouldAskThePresenterToPresentOpenDataSourcesLink() {
+        this.sut.shouldOpenDataSourcesLink()
+        assertTrue(this.presenterSpy.presentOpenDataSourcesLinkCalled)
+    }
+
+    @Test
+    fun testShouldOpenSettingsApplicationShouldAskThePresenterToPresentOpenSettingsApplication() {
+        this.sut.shouldOpenSettingsApplication()
+        assertTrue(this.presenterSpy.presentOpenSettingsApplicationCalled)
     }
 }

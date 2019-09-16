@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
@@ -68,7 +68,7 @@ class STLocationOverlayView @JvmOverloads constructor(
         val drawable = GradientDrawable()
         drawable.cornerRadius = this.transformDimension(10F)
         drawable.setColor(Color.WHITE)
-        drawable.setStroke(this.transformDimension(2F).toInt(), Color.BLUE)
+        drawable.setStroke(this.transformDimension(2F).toInt(), Color.rgb(73, 175, 253))
         this.containerLayout.background = drawable
     }
 

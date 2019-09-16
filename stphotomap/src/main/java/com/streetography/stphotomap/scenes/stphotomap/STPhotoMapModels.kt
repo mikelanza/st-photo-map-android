@@ -1,5 +1,6 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
+import android.content.Intent
 import com.google.android.gms.maps.model.LatLng
 import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
@@ -68,5 +69,19 @@ class STPhotoMapModels {
         class Request(val coordinate: Coordinate)
         class Response(val coordinate: Coordinate)
         class ViewModel(val coordinate: Coordinate)
+    }
+
+    class CoordinateCenter {
+        class Response(val coordinate: Coordinate, val entityLevel: EntityLevel)
+        class ViewModel(val coordinate: Coordinate, val zoom: Float)
+    }
+
+    class LocationAccessDeniedAlert {
+        class ViewModel(val messageId: Int, val cancelTitleId: Int, val settingsTitleId: Int)
+    }
+
+    class IntentStart {
+        class Response(val intent: Intent)
+        class ViewModel(val intent: Intent)
     }
 }

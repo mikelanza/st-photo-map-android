@@ -19,6 +19,12 @@ class STPhotoMapDisplayLogicSpy: STPhotoMapDisplayLogic {
     var displayRemoveLocationOverlayCalled: Boolean = false
 
     var displayZoomToCoordinateCalled: Boolean = false
+    var displayCenterToCoordinateCalled: Boolean = false
+
+    var displayRequestLocationPermissionsCalled: Boolean = false
+    var displayLocationAccessDeniedAlertCalled: Boolean = false
+
+    var displayStartIntentCalled: Boolean = false
 
     override fun displayLoadingState() {
         this.displayLoadingStateCalled = true
@@ -58,5 +64,21 @@ class STPhotoMapDisplayLogicSpy: STPhotoMapDisplayLogic {
 
     override fun displayZoomToCoordinate(viewModel: STPhotoMapModels.CoordinateZoom.ViewModel) {
         this.displayZoomToCoordinateCalled = true
+    }
+
+    override fun displayCenterToCoordinate(viewModel: STPhotoMapModels.CoordinateCenter.ViewModel) {
+        this.displayCenterToCoordinateCalled = true
+    }
+
+    override fun displayRequestLocationPermissions() {
+        this.displayRequestLocationPermissionsCalled = true
+    }
+
+    override fun displayLocationAccessDeniedAlert(viewModel: STPhotoMapModels.LocationAccessDeniedAlert.ViewModel) {
+        this.displayLocationAccessDeniedAlertCalled = true
+    }
+
+    override fun displayStartIntent(viewModel: STPhotoMapModels.IntentStart.ViewModel) {
+        this.displayStartIntentCalled = true
     }
 }

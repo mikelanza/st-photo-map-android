@@ -13,4 +13,8 @@
     <string name="st_photo_map_county_level_title">County</string>
     <string name="st_photo_map_state_level_title">State/Region</string>
     <string name="st_photo_map_country_level_title">Country</string>
+
+    <string name="st_photo_map_location_access_denied_message">You have denied the use of location services for this app. If you want to enable it, go to Settings.</string>
+    <string name="st_photo_map_location_access_denied_settings">Go to Settings</string>
+    <string name="st_photo_map_location_access_denied_cancel">Cancel</string>
 </resources>

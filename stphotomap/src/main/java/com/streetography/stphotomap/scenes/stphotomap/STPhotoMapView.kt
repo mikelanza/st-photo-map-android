@@ -1,15 +1,22 @@
 package com.streetography.stphotomap.scenes.stphotomap
 
+import android.Manifest
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -54,22 +61,33 @@ interface STPhotoMapDisplayLogic {
     fun displayRemoveLocationOverlay()
 
     fun displayZoomToCoordinate(viewModel: STPhotoMapModels.CoordinateZoom.ViewModel)
+    fun displayCenterToCoordinate(viewModel: STPhotoMapModels.CoordinateCenter.ViewModel)
+
+    fun displayRequestLocationPermissions()
+    fun displayLocationAccessDeniedAlert(viewModel: STPhotoMapModels.LocationAccessDeniedAlert.ViewModel)
+
+    fun displayStartIntent(viewModel: STPhotoMapModels.IntentStart.ViewModel)
 }
 
 public open class STPhotoMapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr),
     STPhotoMapDisplayLogic, OnMapReadyCallback, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener,
     STPhotoMapMarkerHandlerDelegate {
+    public val FINE_LOCATION_REQUEST_CODE: Int = 2019
+
     var interactor: STPhotoMapBusinessLogic? = null
 
     var entityLevelView: STEntityLevelView? = null
     var mapView: GoogleMap? = null
     var progressBar: ProgressBar? = null
     var locationOverlayView: STLocationOverlayView? = null
+    var userLocationButton: ImageButton? = null
+    var dataSourcesButton: Button? = null
 
     var markerHandler: STPhotoMapMarkerHandler? = null
 
     public var delegate: STPhotoMapViewDelegate? = null
+    public var activity: WeakReference<Activity>? = null
 
     private var tileOverlay: TileOverlay? = null
 
@@ -79,12 +97,16 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.addSubviews()
     }
 
-    fun clearTileCache() {
+    public fun requestUserLocation() {
+        this.interactor?.shouldRequestUserLocation()
+    }
+
+    public fun clearTileCache() {
         this.tileOverlay?.clearTileCache()
     }
 
     private fun setup() {
-        val interactor = STPhotoMapInteractor()
+        val interactor = STPhotoMapInteractor(this.context)
         val presenter = STPhotoMapPresenter()
 
         presenter.displayer = WeakReference(this)
@@ -104,6 +126,8 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.setupProgressBar()
         this.setupEntityView()
         this.setupLocationOverlayView()
+        this.setupUserLocationButton()
+        this.setupDataSourcesButton()
     }
 
     private fun setupMapView() {
@@ -151,6 +175,34 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.locationOverlayView?.id = View.generateViewId()
         this.locationOverlayView?.visibility = View.GONE
     }
+
+    private fun setupUserLocationButton() {
+        this.userLocationButton = ImageButton(this.context)
+        this.userLocationButton?.id = View.generateViewId()
+        this.userLocationButton?.background = null
+        this.userLocationButton?.setImageResource(R.drawable.st_current_user_location)
+        this.userLocationButton?.setOnClickListener { this.didClickUserLocationButton() }
+    }
+
+    fun didClickUserLocationButton() {
+        this.interactor?.shouldAskForLocationPermissions()
+    }
+
+    private fun setupDataSourcesButton() {
+        this.dataSourcesButton = Button(this.context)
+        this.dataSourcesButton?.id = View.generateViewId()
+        this.dataSourcesButton?.background = null
+        this.dataSourcesButton?.isAllCaps = false
+        this.dataSourcesButton?.setText(R.string.st_photo_map_data_sources_title)
+        this.dataSourcesButton?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        this.dataSourcesButton?.setTextColor(Color.DKGRAY)
+        this.dataSourcesButton?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 9F)
+        this.dataSourcesButton?.setOnClickListener { this.didClickDataSourcesButton() }
+    }
+
+    fun didClickDataSourcesButton() {
+        this.interactor?.shouldOpenDataSourcesLink()
+    }
     //endregion
 
     //region Subviews addition
@@ -158,6 +210,8 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.addProgressBar()
         this.addEntityView()
         this.addLocationOverlayView()
+        this.addUserLocationButton()
+        this.addDataSourcesButton()
     }
 
     private fun addProgressBar() {
@@ -177,11 +231,30 @@ public open class STPhotoMapView @JvmOverloads constructor(
     private fun addLocationOverlayView() {
         val layoutParameters = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         val marginLeft = this.transformDimension(15F).toInt()
-        val marginBottom = this.transformDimension(15F).toInt()
+        val marginBottom = this.transformDimension(30F).toInt()
         val marginRight = this.transformDimension(75F).toInt()
         layoutParameters.setMargins(marginLeft, 0, marginRight, marginBottom)
         layoutParameters.addRule(ALIGN_PARENT_BOTTOM)
         this.addView(this.locationOverlayView, layoutParameters)
+    }
+
+    private fun addUserLocationButton() {
+        val layoutParameters = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        val marginBottom = this.transformDimension(5F).toInt()
+        val marginRight = this.transformDimension(5F).toInt()
+        layoutParameters.setMargins(0, 0, 0, 0)
+        layoutParameters.addRule(ALIGN_PARENT_BOTTOM)
+        layoutParameters.addRule(ALIGN_PARENT_END)
+        this.addView(this.userLocationButton, layoutParameters)
+    }
+
+    private fun addDataSourcesButton() {
+        val layoutParameters = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        val marginRight = this.transformDimension(5F).toInt()
+        layoutParameters.setMargins(0, 0, 0, 0)
+        layoutParameters.addRule(ALIGN_PARENT_BOTTOM)
+        this.userLocationButton?.id?.let { layoutParameters.addRule(START_OF, it) }
+        this.addView(this.dataSourcesButton, layoutParameters)
     }
     //endregion
 
@@ -330,6 +403,40 @@ public open class STPhotoMapView @JvmOverloads constructor(
             this.mapView?.let {
                 val zoom = it.cameraPosition.zoom + 1F
                 it.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(viewModel.coordinate.latitude, viewModel.coordinate.longitude), zoom))
+            }
+        }
+    }
+
+    override fun displayCenterToCoordinate(viewModel: STPhotoMapModels.CoordinateCenter.ViewModel) {
+        this.post {
+            this.mapView?.animateCamera(CameraUpdateFactory.newLatLngZoom(viewModel.coordinate.locationCoordinate, viewModel.zoom))
+        }
+    }
+
+    override fun displayRequestLocationPermissions() {
+        this.post {
+            this.activity?.get()?.let {
+                ActivityCompat.requestPermissions(it, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), FINE_LOCATION_REQUEST_CODE)
+            }
+        }
+    }
+
+    override fun displayLocationAccessDeniedAlert(viewModel: STPhotoMapModels.LocationAccessDeniedAlert.ViewModel) {
+        this.post {
+            val dialogBuilder = AlertDialog.Builder(this.context)
+            dialogBuilder.setMessage(viewModel.messageId)
+            dialogBuilder.setPositiveButton(viewModel.settingsTitleId) { dialog, _ -> this.interactor?.shouldOpenSettingsApplication() }
+            dialogBuilder.setNegativeButton(viewModel.cancelTitleId) { dialog, _ -> dialog.cancel() }
+            dialogBuilder.create().show()
+        }
+    }
+
+    override fun displayStartIntent(viewModel: STPhotoMapModels.IntentStart.ViewModel) {
+        this.post {
+            this.activity?.get()?.let {
+                if (viewModel.intent.resolveActivity(it.packageManager) != null) {
+                    it.startActivity(viewModel.intent)
+                }
             }
         }
     }
