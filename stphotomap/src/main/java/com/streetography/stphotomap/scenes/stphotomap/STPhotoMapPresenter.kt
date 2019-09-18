@@ -5,6 +5,7 @@ import android.net.Uri
 import android.provider.Settings
 import com.streetography.stphotomap.R
 import com.streetography.stphotomap.models.entity_level.EntityLevel
+import com.streetography.stphotomap.scenes.stphotomap.photo_map_view.STPhotoMapDisplayLogic
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 

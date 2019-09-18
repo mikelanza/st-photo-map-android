@@ -1,9 +1,10 @@
 package com.streetography.stphotomap.scenes.stphotomap.test.doubles
 
-import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapDisplayLogic
+import com.streetography.stphotomap.scenes.stphotomap.photo_map_view.STPhotoMapDisplayLogic
 import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapModels
 
-class STPhotoMapDisplayLogicSpy: STPhotoMapDisplayLogic {
+class STPhotoMapDisplayLogicSpy:
+    STPhotoMapDisplayLogic {
     var displayLoadingStateCalled: Boolean = false
     var displayNotLoadingStateCalled: Boolean = false
 

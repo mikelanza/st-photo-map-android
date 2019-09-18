@@ -9,5 +9,5 @@ fun STPhotoMapInteractor.getCarouselGeojson(): GeoJSONObject {
     val inputStream = context?.resources?.openRawResource(R.raw.carousel_geojson)
     val inputString = inputStream?.bufferedReader().use { it?.readText() }
     inputStream?.close()
-    return GeoJSON().parse( JSONObject(inputString))
+    return GeoJSON().parse(JSONObject(inputString))
 }

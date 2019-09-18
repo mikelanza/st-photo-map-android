@@ -1,4 +1,4 @@
-package com.streetography.stphotomap.scenes.stphotomap
+package com.streetography.stphotomap.scenes.stphotomap.photo_map_view
 
 import android.Manifest
 import android.app.Activity
@@ -30,6 +30,8 @@ import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.location.STLocation
 import com.streetography.stphotomap.models.tile_coordinate.TileCoordinate
+import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapModels
+import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapPresenter
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapBusinessLogic
 import com.streetography.stphotomap.scenes.stphotomap.interactor.STPhotoMapInteractor
 import com.streetography.stphotomap.scenes.stphotomap.location_level.STPhotoMapMarkerHandler
@@ -274,6 +276,8 @@ public open class STPhotoMapView @JvmOverloads constructor(
         this.setupMarkerHandler()
 
         this.delegate?.photoMapViewOnMapReady(googleMap)
+
+        this.drawRomaniaGroundOverlay()
     }
 
     override fun onCameraIdle() {
@@ -288,7 +292,11 @@ public open class STPhotoMapView @JvmOverloads constructor(
     }
 
     override fun onMapClick(latLng: LatLng?) {
-        this.interactor?.shouldNavigateToPhotoCollection(STPhotoMapModels.PhotoCollectionNavigation.Request(latLng));
+        this.interactor?.shouldNavigateToPhotoCollection(
+            STPhotoMapModels.PhotoCollectionNavigation.Request(
+                latLng
+            )
+        );
     }
     //endregion
 
@@ -315,7 +323,11 @@ public open class STPhotoMapView @JvmOverloads constructor(
     //region Business logic
     private fun shouldUpdateVisibleTiles() {
         val visibleTiles: ArrayList<TileCoordinate> = this.mapView?.visibleTiles() ?: ArrayList()
-        this.interactor?.shouldUpdateVisibleTiles(STPhotoMapModels.VisibleTiles.Request(visibleTiles))
+        this.interactor?.shouldUpdateVisibleTiles(
+            STPhotoMapModels.VisibleTiles.Request(
+                visibleTiles
+            )
+        )
     }
 
     private fun shouldDetermineEntityLevel() {
@@ -444,16 +456,28 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
     //region Marker handler delegate
     override fun photoMapMarkerHandlerDidReselectPhoto(photoId: String) {
-        this.interactor?.shouldNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Request(photoId))
+        this.interactor?.shouldNavigateToPhotoDetails(
+            STPhotoMapModels.PhotoDetailsNavigation.Request(
+                photoId
+            )
+        )
     }
 
     override fun photoMapMarkerHandlerDidSelectPhoto(photoId: String) {
 //        this.interactor?.shouldGetPhotoDetailsForPhotoMarker(STPhotoMapModels.PhotoDetails.Request(photoId))
-        this.interactor?.shouldNavigateToPhotoDetails(STPhotoMapModels.PhotoDetailsNavigation.Request(photoId))
+        this.interactor?.shouldNavigateToPhotoDetails(
+            STPhotoMapModels.PhotoDetailsNavigation.Request(
+                photoId
+            )
+        )
     }
 
     override fun photoMapMarkerHandlerZoomToCoordinate(coordinate: Coordinate) {
-        this.interactor?.shouldZoomToCoordinate(STPhotoMapModels.CoordinateZoom.Request(coordinate))
+        this.interactor?.shouldZoomToCoordinate(
+            STPhotoMapModels.CoordinateZoom.Request(
+                coordinate
+            )
+        )
     }
 
     override fun photoMapMarkerHandlerNavigateToSpecificPhotos(photoIds: ArrayList<String>) {

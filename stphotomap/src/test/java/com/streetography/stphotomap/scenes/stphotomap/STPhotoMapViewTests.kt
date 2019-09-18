@@ -7,6 +7,7 @@ import com.streetography.stphotomap.R
 import com.streetography.stphotomap.models.coordinate.Coordinate
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.location.STLocation
+import com.streetography.stphotomap.scenes.stphotomap.photo_map_view.STPhotoMapView
 import com.streetography.stphotomap.scenes.stphotomap.seeds.STPhotoMapSeeds
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STEntityLevelViewSpy
 import com.streetography.stphotomap.scenes.stphotomap.test.doubles.STPhotoMapBusinessLogicSpy
@@ -27,7 +28,9 @@ class STPhotoMapViewTests: TestCase() {
     lateinit var entityLevelViewSpy: STEntityLevelViewSpy
 
     private fun setupSubjectUnderTest() {
-        this.sut = STPhotoMapView(ApplicationProvider.getApplicationContext())
+        this.sut = STPhotoMapView(
+            ApplicationProvider.getApplicationContext()
+        )
 
         this.interactorSpy = STPhotoMapBusinessLogicSpy()
         this.sut.interactor = this.interactorSpy

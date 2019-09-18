@@ -3,9 +3,10 @@ package com.streetography.stphotomap.scenes.stphotomap.test.doubles
 import com.google.android.gms.maps.GoogleMap
 import com.streetography.stphotomap.models.entity_level.EntityLevel
 import com.streetography.stphotomap.models.location.STLocation
-import com.streetography.stphotomap.scenes.stphotomap.STPhotoMapViewDelegate
+import com.streetography.stphotomap.scenes.stphotomap.photo_map_view.STPhotoMapViewDelegate
 
-class STPhotoMapViewDelegateSpy: STPhotoMapViewDelegate {
+class STPhotoMapViewDelegateSpy:
+    STPhotoMapViewDelegate {
     var photoMapViewOnMapReadyCalled: Boolean = false
     var photoMapViewNavigateToPhotoDetailsForPhotoIdCalled: Boolean = false
     var photoMapViewNavigateToPhotoCollectionCalled: Boolean = false
