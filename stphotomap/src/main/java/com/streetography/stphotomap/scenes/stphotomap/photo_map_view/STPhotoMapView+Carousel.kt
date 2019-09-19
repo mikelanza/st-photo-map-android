@@ -1,6 +1,8 @@
 package com.streetography.stphotomap.scenes.stphotomap.photo_map_view
 
 import android.graphics.*
+import android.os.Handler
+import android.os.Looper
 import com.google.android.gms.maps.model.*
 import com.streetography.stphotomap.R
 import com.streetography.stphotomap.models.geojson.GeoJSON
@@ -11,34 +13,66 @@ import com.streetography.stphotomap.models.geojson.geometry.GeoJSONPolygon
 import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONGeometry
 import com.streetography.stphotomap.models.geojson.interfaces.GeoJSONObject
 import org.json.JSONObject
+import kotlin.concurrent.fixedRateTimer
 
 class CarouselOverlay {
+    var polygon: Polygon? = null
     var polygonOptions: PolygonOptions? = null
+
+    var polyline: Polyline? = null
     var polylineOptions: PolylineOptions? = null
+
+    var groundOverlay: GroundOverlay? = null
+    var groundOverlayOptions: GroundOverlayOptions? = null
+
     var bitmap: Bitmap? = null
+
+    var didChangeImage: Boolean = false
+}
+
+fun STPhotoMapView.startCarouselTimer() {
+    fixedRateTimer("carouselTimer", false, 3 * 1000, 3 * 1000) {
+        Handler(Looper.getMainLooper()).post {
+            updateCarouselOverlays()
+        }
+    }
+}
+
+fun STPhotoMapView.updateCarouselOverlays() {
+    this.carouselOverlays.forEach { this.updateCarouselOverlay(it) }
+}
+
+fun STPhotoMapView.updateCarouselOverlay(overlay: CarouselOverlay) {
+    val id = if (overlay.didChangeImage) R.drawable.cat else R.drawable.watch
+    val bitmap = BitmapFactory.decodeResource(this.resources, id)
+    overlay.bitmap = bitmap
+
+    overlay.polygon?.let {
+        val overlayBitmap = overlayBitmap(Point(bitmap.width, bitmap.height), boundsFor(it.points), it.points, bitmap)
+        overlay.groundOverlay?.setImage(BitmapDescriptorFactory.fromBitmap(overlayBitmap))
+    }
+
+    overlay.didChangeImage = !overlay.didChangeImage
 }
 
 fun STPhotoMapView.drawRomaniaGroundOverlay() {
     val geoJSONObject = this.getRomaniaGeoJSONObject()
-    val carouselOverlays = this.carouselOverlaysFor(geoJSONObject)
-    val groundOverlaysOptions = carouselOverlays.mapNotNull { this.groundOverlayOptionsFor(it) }
-    groundOverlaysOptions.forEach { this.mapView?.addGroundOverlay(it) }
+    this.carouselOverlays = this.carouselOverlaysFor(geoJSONObject)
+    this.carouselOverlays.forEach { this.updateCarouselOverlayOptions(it) }
 }
 
-fun STPhotoMapView.groundOverlayOptionsFor(carouselOverlay: CarouselOverlay): GroundOverlayOptions? {
-    this.polygonFor(carouselOverlay)?.let { polygon ->
-        carouselOverlay.bitmap?.let { bitmap ->
-            return groundOverlayOptions(polygon, bitmap)
+fun STPhotoMapView.updateCarouselOverlayOptions(carouselOverlay: CarouselOverlay) {
+    carouselOverlay.polygonOptions?.let { polygonOptions ->
+        this.mapView?.addPolygon(polygonOptions)?.let { polygon ->
+            carouselOverlay.bitmap?.let { bitmap ->
+                groundOverlayOptions(polygon, bitmap)?.let { groundOverlayOptions ->
+                    carouselOverlay.polygon = polygon
+                    carouselOverlay.groundOverlayOptions = groundOverlayOptions
+                    carouselOverlay.groundOverlay = this.mapView?.addGroundOverlay(groundOverlayOptions)
+                }
+            }
         }
     }
-    return null
-}
-
-fun STPhotoMapView.polygonFor(carouselOverlay: CarouselOverlay): Polygon? {
-    carouselOverlay.polygonOptions?.let {
-        return this.mapView?.addPolygon(it)
-    }
-    return null
 }
 
 fun STPhotoMapView.carouselOverlaysFor(geoJSONObject: GeoJSONObject): ArrayList<CarouselOverlay> {
@@ -105,17 +139,48 @@ fun STPhotoMapView.getRomaniaGeoJSONObject(): GeoJSONObject {
     return GeoJSON().parse(JSONObject(inputString))
 }
 
-fun groundOverlayOptions(
+fun STPhotoMapView.groundOverlayOptions(
     polygon: Polygon,
     bitmap: Bitmap
-): GroundOverlayOptions {
+): GroundOverlayOptions? {
     val bounds = boundsFor(polygon.points)
-    val overlayBitmap = overlayBitmap(bounds, polygon.points, bitmap)
+    val size = Point(bitmap.width, bitmap.height)
+    val overlayBitmap = overlayBitmap(size, bounds, polygon.points, bitmap)
     return GroundOverlayOptions()
         .image(BitmapDescriptorFactory.fromBitmap(overlayBitmap))
         .positionFromBounds(bounds)
         .zIndex(2F)
 }
+
+/*
+fun STPhotoMapView.bitmapSizeFor(polygon: List<LatLng>, bitmap: Bitmap): Point {
+    val projection = this.mapView?.projection ?: run { return Point() }
+
+    val bounds = boundsFor(polygon)
+    val boundsWidth = bounds.northeast.longitude - bounds.southwest.longitude
+    val boundsHeight = bounds.northeast.latitude - bounds.southwest.latitude
+    val northEast = projection.toScreenLocation(bounds.northeast)
+    val southWest = projection.toScreenLocation(bounds.southwest)
+
+    val screenBoundHeight = northEast.y - southWest.y
+    val screenBoundWidth = northEast.x - southWest.x
+    val scale = abs(screenBoundHeight.toDouble() / screenBoundWidth.toDouble())
+
+    val overlayBitmapWidth: Int
+    val overlayBitmapHeight: Int
+    val maximumOverlaySize = 1200
+    if (abs(boundsWidth) > abs(boundsHeight)) {
+        overlayBitmapWidth = maximumOverlaySize
+        overlayBitmapHeight = (overlayBitmapWidth * scale).toInt()
+    } else {
+        overlayBitmapHeight = maximumOverlaySize
+        overlayBitmapWidth = (overlayBitmapHeight * scale).toInt()
+    }
+
+    if (bitmap.width > overlayBitmapWidth && bitmap.height > overlayBitmapHeight) return Point(bitmap.width, bitmap.height)
+    return Point(overlayBitmapWidth, overlayBitmapHeight)
+}
+*/
 
 fun boundsFor(polygon: List<LatLng>): LatLngBounds {
     val builder = LatLngBounds.Builder()
@@ -124,13 +189,14 @@ fun boundsFor(polygon: List<LatLng>): LatLngBounds {
 }
 
 fun overlayBitmap(
+    size: Point,
     bounds: LatLngBounds,
     polygon: List<LatLng>,
     bitmap: Bitmap
 ): Bitmap {
-    val canvasBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-    val path = pathFor(polygon, bitmap.width, bitmap.height, bounds)
-    val rect = Rect(0, 0, bitmap.width, bitmap.height)
+    val canvasBitmap = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_8888)
+    val path = pathFor(polygon, size.x, size.y, bounds)
+    val rect = Rect(0, 0, size.x, size.y)
     val canvas = Canvas(canvasBitmap)
 
     val paint = Paint()

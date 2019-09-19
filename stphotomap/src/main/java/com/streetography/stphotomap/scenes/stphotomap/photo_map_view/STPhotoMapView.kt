@@ -9,6 +9,8 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
@@ -92,6 +94,8 @@ public open class STPhotoMapView @JvmOverloads constructor(
     public var activity: WeakReference<Activity>? = null
 
     private var tileOverlay: TileOverlay? = null
+
+    var carouselOverlays: ArrayList<CarouselOverlay> = ArrayList()
 
     init {
         this.setup()
@@ -277,7 +281,10 @@ public open class STPhotoMapView @JvmOverloads constructor(
 
         this.delegate?.photoMapViewOnMapReady(googleMap)
 
-        this.drawRomaniaGroundOverlay()
+        Handler(Looper.getMainLooper()).postDelayed({
+            this.drawRomaniaGroundOverlay()
+            this.startCarouselTimer()
+        }, 3000)
     }
 
     override fun onCameraIdle() {
