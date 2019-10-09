@@ -47,9 +47,9 @@ See the [STPhotoMap - Android Examples](https://github.com/mikelanza/st-photo-ma
 
 ## TODOs
 
-∙ Implement photo carousel. Checkout the branch: `feature/carousel_implementation`.
-∙ Implement photo collection activity or a library for photo collection.
-∙ Implement photo details activity or a library for photo details.
+∙ Implement photo carousel. Checkout the branch: `feature/carousel_implementation` <br />
+∙ Implement photo collection activity or a library for photo collection <br />
+∙ Implement photo details activity or a library for photo details
 
 ## Contributing
 
